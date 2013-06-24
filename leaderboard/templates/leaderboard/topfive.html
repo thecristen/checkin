@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}Leaderboard{% endblock %}
+{% block pageheader %}
+    <h1>Find out what companies are going green!</h1>
+{% endblock %}
+{% block body %}
+
+<div class="control-group">
+    <label class="control-label">Select Month:</label>
+    <div class="controls">
+        <select id="id_month" name="month"</select>
+    </div>
+</div>
+<div class="control-group">
+    <label class="control-label">Select Sector</label>
+    <div class="controls">
+        <select id="id_month" name="sector"></select>
+    </div>
+</div>
+<ul>
+    {% for company in top_five_companies %}
+    <li>{{ company.0 }} -- {{ company.1 }}</li>
+    {% endfor %}
+</ul>
+{% endblock %}
