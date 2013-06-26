@@ -1,0 +1,11 @@
+<ul>
+{% for company in top_five_companies %}
+<li>{{ company.0 }} -- {{ company.1 }}</li>
+{% endfor %}
+</ul>
+
+<ul>
+{% for month in months %}
+<li> {{ month.month }} -- {{ month.url_month }}</li>
+{% endfor %}
+</ul>

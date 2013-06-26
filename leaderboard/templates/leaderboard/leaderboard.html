@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}Leaderboard{% endblock %}
+{% block javascript %}
+<script type="text/javascript" href="{{ STATIC_URL }}libs/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+    function getResults() {
+        var vvpSelect = document.getElementById("id_vol_v_perc");
+        var monthSelect = document.getElementById("id_month");
+        var sizeSelect = document.getElementById("id_size");
+        var sectorSelect = document.getElementById("id_sector");
+        var selVVP = vvpSelect.options[vvpSelect.selectedIndex].value;
+        var selMonth = monthSelect.options[monthSelect.selectedIndex].value;
+        var selSize = sizeSelect.options[sizeSelect.selectedIndex].value;
+        var selSector = sectorSelect.options[sectorSelect.selectedIndex].value;
+        var hostname = top.location.host.toString();
+        var selections = "/leaderboard/" + selMonth + "/" + selVVP + "/" + selSize + "/" + selSector;
+        var url = "http://" + hostname + selections;
+        document.location.href = url;
+    }
+</script>
+{% endblock %}
+{% block pageheader %}
+    <h1>Find out what companies are going green!</h1>
+{% endblock %}
+{% block body %}
+<div class="row">
+    <div class="span6" id="ctrlAndTopFive">
+        <div class="row">
+            <div class="span6" style="padding:10px;background-color:#DBDBDB" >
+                <div class="row">
+                    <div class="control-group span3"> 
+                        <label class="control-label"><strong>Select by volume or percent:</strong></label><div class="controls span3">
+                            <select id="id_vol_v_perc" name="vol_v_perc" selected="{{ selVVP }}">
+                                <option value="perc">By Percent</option>
+                                <option value="vol">By Volume</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="control-group span3">
+                        <label class="control-label"><strong>Select Month:</strong></label> <div class="controls span3">
+                            <select id="id_month" name="month" selected="{{ selMonth }}">
+                                <option value="all">-- ALL --</option>
+                                {% for month in months %}
+                                <option value="{{ month.url_month }}">{{ month.month }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="control-group span3">
+                        <label class="control-label"><strong>Select Size:</strong></label> <div class="controls span3">
+                            <select id="id_size" name="size" selected="{{ selSize }}">
+                                <option value="all">-- ALL --</option>
+                                <option value="small">Small</option>
+                                <option value="medium">Medium</option>
+                                <option value="large">Large</option>
+                                <option value="largest">Largest</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="control-group span3">
+                        <label class="control-label"><strong>Select Sector:</strong></label> <div class="controls span3">
+                            <select id="id_sector" name="sector" selected="{{ selSector}}">
+                                <option value="all">-- ALL --</option>
+                                {% for sector in sectors %}
+                                <option value={{ sector.url_name }}>{{ sector.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-success btn-large span3" onclick="getResults()">Get Results!</button>
+                </div>
+            </div>
+            <div class="span6" style="padding:10px">
+                <br />
+                <h4><strong>The results of all months for all sectors in all size categories organized by percentage are:</strong></h2>
+                <ul class="nav nav-pills nav-stacked">
+                    <li class="active"><a href="#"><h4>The Winner is Dana Farber, with 40% participation!</h4></a></li>
+                    <li><a href="#"><h4>Second Place is Millenium Pharmeceuticals, with 36% participation!</h4></a></li>
+                    <li><a href="#"><h4>Blah!</h4></a></li>
+                    <li><a href="#"><h4>More Blah!</h4></a></li>
+                    <li><a href="#"><h4>Even More Blah!!!</h4></a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="span6">
+        
+    </div>
+</div>
+{% endblock %}
