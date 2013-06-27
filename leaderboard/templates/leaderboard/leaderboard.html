@@ -4,6 +4,8 @@
 {% block javascript %}
 <script type="text/javascript" href="{{ STATIC_URL }}libs/bootstrap/js/bootstrap.min.js"></script>
 <script type="text/javascript">
+    document.onload = function() {
+        var 
     function getResults() {
         var vvpSelect = document.getElementById("id_vol_v_perc");
         var monthSelect = document.getElementById("id_month");
@@ -39,7 +41,7 @@
                     </div>
                     <div class="control-group span3">
                         <label class="control-label"><strong>Select Month:</strong></label> <div class="controls span3">
-                            <select id="id_month" name="month" selected="{{ selMonth }}">
+                            <select id="id_month" name="month">
                                 <option value="all">-- ALL --</option>
                                 {% for month in months %}
                                 <option value="{{ month.url_month }}">{{ month.month }}</option>
@@ -49,7 +51,7 @@
                     </div>
                     <div class="control-group span3">
                         <label class="control-label"><strong>Select Size:</strong></label> <div class="controls span3">
-                            <select id="id_size" name="size" selected="{{ selSize }}">
+                            <select id="id_size" name="size">
                                 <option value="all">-- ALL --</option>
                                 <option value="small">Small</option>
                                 <option value="medium">Medium</option>
@@ -60,7 +62,7 @@
                     </div>
                     <div class="control-group span3">
                         <label class="control-label"><strong>Select Sector:</strong></label> <div class="controls span3">
-                            <select id="id_sector" name="sector" selected="{{ selSector}}">
+                            <select id="id_sector" name="sector">
                                 <option value="all">-- ALL --</option>
                                 {% for sector in sectors %}
                                 <option value={{ sector.url_name }}>{{ sector.name }}</option>
