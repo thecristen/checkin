@@ -14,9 +14,9 @@ def leaderboard_context(request, vol_v_perc='all', month='all', sector='all', si
     if sector == 'all' and size == 'all':
         emps = Employer.objects.all()
     elif sector == 'all':
-        emps = Employer.objects.filter(size_cat=size, month=month)
+        emps = Employer.objects.filter(size_cat=size)
     elif size == 'all':
-        emps = Employer.objects.filter(sector=sector, month=month)
+        emps = Employer.objects.filter(sector=sector)
     else:
         emps = Employer.objects.filter(size_cat=size, sector=sector)
     if vol_v_perc == 'perc': 
