@@ -9,33 +9,39 @@ def index(request):
     context = {'latest_check_ins' : latest_check_ins}
     return render(request, 'leaderboard/index.html', context)
 
-def leaderboard_context(request, vol_v_perc='all', month='all', sector='all', size='all', focusEmployer=None):
+def leaderboard_context(request, vol_v_perc='perc', month='all', svs='all', sos='1', focusEmployer=None):
     companyList = []
-    if sector == 'all' and size == 'all':
+    """
+    if svs=='all':
         emps = Employer.objects.all()
-    elif sector == 'all':
-        emps = Employer.objects.filter(size_cat=size)
-    elif size == 'all':
-        emps = Employer.objects.filter(sector=sector)
-    else:
-        emps = Employer.objects.filter(size_cat=size, sector=sector)
+    elif svs=='bysize':
+        emps = Employer.objects.filter(size=int(svs))
+    elif svs=='bysector':
+        emps = Employer.objects.filter(sector=int(sos))
+    else: emps = []
+    """
+    emps = Employer.objects.all()
     if vol_v_perc == 'perc': 
         for company in emps:
             try:
-                companyList += [(company.name, company.nr_surveys/company.nr_employees),]
+                companyList += [(company.name, ('%.1f' % (100 * (company.nr_surveys(month) + 0.0)/(company.nr_employees + 0.0)))),]
             except TypeError:
                 pass
     else:
         for company in emps:
-            companyList += [(company.name, company.nr_surveys),]
+            companyList += [(company.name, company.nr_surveys(month)),]
     topFive = sorted(companyList, key=itemgetter(1), reverse=True)[:5]
-    if focusEmployer == None:
+    if focusEmployer == None and len(topFive) > 0:
         focusEmployer = topFive[0]
-    context = { 'top_five_companies': topFive, 'sectors': EmplSector.objects.all(), 'months': Month.objects.all(), 'selVVP': vol_v_perc, 'selMonth': month, 'selSector': sector, 'selSize': size }
+    if vol_v_perc == 'perc':
+        vvpMsg = '% participation'
+    else:
+        vvpMsg = ' checkins'
+    context = { 'top_five_companies': topFive, 'sectors': sorted(EmplSector.objects.all()), 'months': Month.objects.all(), 'selVVP': vol_v_perc, 'selMonth': month, 'selSOS': sos, 'selSVS': svs, 'vvpMsg': vvpMsg }
     return context
 
-def leaderboard(request, vol_v_perc='all', month='all', sector='all', size='all', focusEmployer=None):
-    context = leaderboard_context(request, vol_v_perc, month, sector, size, focusEmployer)
+def leaderboard(request, vol_v_perc='all', month='all', svs='all', sos='1', focusEmployer=None):
+    context = leaderboard_context(request, vol_v_perc, month, svs, sos, focusEmployer)
     return render(request, 'leaderboard/leaderboard.html', context)
 
 def leaderboard_bare(request, vol_v_perc='all', month='all', sector='all', size='all', focusEmployer=None):
