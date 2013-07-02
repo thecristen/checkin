@@ -77,7 +77,7 @@ class Employer(models.Model):
 
     def nr_surveys(self, month):
         if month != 'all':
-            return Commutersurver.objects.filter(employer__exact=self.name, month=month)
+            return Commutersurver.objects.filter(employer__exact=self.name, month=month).count()
         else:
             return Commutersurvey.objects.filter(employer__exact=self.name).count()
 
