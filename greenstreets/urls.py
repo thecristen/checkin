@@ -25,7 +25,6 @@ urlpatterns = patterns('',
     url(r'^leaderboard/(?P<month>[-\w]+)/(?P<vol_v_perc>\w+)/(?P<size>\w+)/(?P<sector>\w+)/$', 'leaderboard.views.leaderboard'),
     url(r'^leaderboard/$', 'leaderboard.views.leaderboard'),
     url(r'^leaderboard-bare', 'leaderboard.views.leaderboard_bare'),
-    url(r'^test/(?P<text>\w+)/(?P<test>\w+)/$', 'leaderboard.views.test')
 )
 
 urlpatterns += staticfiles_urlpatterns()
