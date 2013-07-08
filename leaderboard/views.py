@@ -3,25 +3,23 @@ from survey.models import Commutersurvey, Employer, EmplSector
 from leaderboard.models import Month
 from django.shortcuts import render, get_object_or_404
 from operator import itemgetter
+from django.db.models import Q
 
 def index(request):
     latest_check_ins = Commutersurvey.objects.order_by('month')[:5]
     context = {'latest_check_ins' : latest_check_ins}
     return render(request, 'leaderboard/index.html', context)
 
-def leaderboard_context(request, vol_v_perc='perc', month='all', svs='all', sos='1', focusEmployer=None):
-    companyList = []
-    """
-    if svs=='all':
+def getTopFiveCompanies(vvp, month, svs, sos):
+    emps = []
+    if svs == 'all':
         emps = Employer.objects.all()
-    elif svs=='bysize':
-        emps = Employer.objects.filter(size=int(svs))
-    elif svs=='bysector':
-        emps = Employer.objects.filter(sector=int(sos))
-    else: emps = []
-    """
-    emps = Employer.objects.all()
-    if vol_v_perc == 'perc': 
+    elif svs == 'size':
+        emps = Employer.objects.filter(size=sos)
+    elif svs == 'sector':
+        emps = Employer.objects.filter(sector=sos)
+    companyList = []
+    if vol_v_perc == 'perc':
         for company in emps:
             try:
                 companyList += [(company.name, ('%.1f' % (100 * (company.nr_surveys(month) + 0.0)/(company.nr_employees + 0.0)))),]
@@ -29,23 +27,42 @@ def leaderboard_context(request, vol_v_perc='perc', month='all', svs='all', sos=
                 pass
     else:
         for company in emps:
-            companyList += [(company.name, company.nr_surveys(month)),]
+            companyList += [(company.name, str(company.nr_surveys(month))),]
     topFive = sorted(companyList, key=itemgetter(1), reverse=True)[:5]
+    return topFive
+
+def getEmpCheckinMatrix(emp):
+    commuterModes = ['c', 'cp', 'w', 'b', 't', 'tc', 'o']
+    checkinMatrix = []
+    todayPos = -1
+    for todayWM in commuterModes:
+        todayPos += 1
+        checkinMatrix += [[],]
+        for normalWM in commuterModes:
+            numTypeCommutes = Commutersurvey.objects.filter(to_work_today=todayWM, to_work_normally=normalWM).count() + Commutersurvey.objects.filter(from_work_today=todayWM, from_work_normally=normalWM).count()
+            checkinMatrix[todayPos] += [numTypeCommutes,]
+    return checkinMatrix
+
+def getBreakdown(emp, month):
+    pass
+
+def leaderboard_context(request, vol_v_perc='perc', month='all', svs='all', sos='1', focusEmployer=None):
+    topFive = getTopFiveCompanies(vol_v_perc, month, svs, sos)
     if focusEmployer == None and len(topFive) > 0:
         focusEmployer = topFive[0]
-    if vol_v_perc == 'perc':
-        vvpMsg = '% participation'
-    else:
+    if vol_v_perc == 'vol':
         vvpMsg = ' checkins'
+    else:
+        vvpMsg = '% participation'
     context = { 'top_five_companies': topFive, 'sectors': sorted(EmplSector.objects.all()), 'months': Month.objects.all(), 'selVVP': vol_v_perc, 'selMonth': month, 'selSOS': sos, 'selSVS': svs, 'vvpMsg': vvpMsg }
     return context
-
+    
 def leaderboard(request, vol_v_perc='all', month='all', svs='all', sos='1', focusEmployer=None):
     context = leaderboard_context(request, vol_v_perc, month, svs, sos, focusEmployer)
     return render(request, 'leaderboard/leaderboard.html', context)
 
-def leaderboard_bare(request, vol_v_perc='all', month='all', sector='all', size='all', focusEmployer=None):
-    context = leaderboard_context(request, vol_v_perc, month, sector, size, focusEmployer)
+def leaderboard_bare(request, vol_v_perc='all', month='all', svs='all', sos='1', focusEmployer=None):
+    context = leaderboard_context(request, vol_v_perc, month, svs, sos, focusEmployer)
     return render(request, 'leaderboard/leaderboard_bare.html', context)
 
 

@@ -8,13 +8,13 @@
         var vvpSelect = document.getElementById("id_vol_v_perc");
         var monthSelect = document.getElementById("id_month");
         var svsSelect = document.getElementById("id_svs");
-        var sectorSelect = document.getElementById("id_sector");
+        var sosSelect = document.getElementById("id_sos");
         var selVVP = vvpSelect.options[vvpSelect.selectedIndex].value;
         var selMonth = monthSelect.options[monthSelect.selectedIndex].value;
-        var selSize = svsSelect.options[svsSelect.selectedIndex].value;
-        var selSector = sectorSelect.options[sectorSelect.selectedIndex].value;
+        var selSVS = svsSelect.options[svsSelect.selectedIndex].value;
+        var selSOS = sosSelect.options[sosSelect.selectedIndex].value;
         var hostname = top.location.host.toString();
-        var selections = "/leaderboard/" + selMonth + "/" + selVVP + "/" + selSize + "/" + selSector;
+        var selections = "/leaderboard/" + selMonth + "/" + selVVP + "/" + selSVS + "/" + selSOS;
         var url = "http://" + hostname + selections;
         document.location.href = url;
     }
@@ -49,7 +49,7 @@
                     </div>
                     <div class="control-group span3">
                         <label class="control-label"><strong>Select By Size or By Sector:</strong></label> <div class="controls span3">
-                            <select id=id_svs" name='svs'>
+                            <select id="id_svs" name='svs'>
                                 <option value="all">-- ALL --</option>
                                 <option value="bysize">By Size</option>
                                 <option value="bysector">By Sector</option>
@@ -57,7 +57,12 @@
                         </div>
                     </div>
                     {% if selSVS == "all" %}
-                    <div class="control-group span3">
+                    <div class="control-group span3 hidden">
+                        <div class="controls span3">
+                            <select id="id_sos" name="sos">
+                                <option value="all"></option>
+                            </select>
+                        </div>
                     </div>
                     {% elif selSVS == "size" %}
                     <div class="control-group span3">
