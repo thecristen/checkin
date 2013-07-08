@@ -3,7 +3,6 @@ from survey.models import Commutersurvey, Employer, EmplSector
 from leaderboard.models import Month
 from django.shortcuts import render, get_object_or_404
 from operator import itemgetter
-from django.db.models import Q
 
 def index(request):
     latest_check_ins = Commutersurvey.objects.order_by('month')[:5]
@@ -31,20 +30,36 @@ def getTopFiveCompanies(vvp, month, svs, sos):
     topFive = sorted(companyList, key=itemgetter(1), reverse=True)[:5]
     return topFive
 
-def getEmpCheckinMatrix(emp):
+def getEmpCheckinMatrix(emp): 
     commuterModes = ['c', 'cp', 'w', 'b', 't', 'tc', 'o']
     checkinMatrix = []
     todayPos = -1
+    empCommutes = Commutersurvey.objects.filter(employer__contains=emp.name)
     for todayWM in commuterModes:
         todayPos += 1
         checkinMatrix += [[],]
         for normalWM in commuterModes:
-            numTypeCommutes = Commutersurvey.objects.filter(to_work_today=todayWM, to_work_normally=normalWM).count() + Commutersurvey.objects.filter(from_work_today=todayWM, from_work_normally=normalWM).count()
+            numTypeCommutes = empCommutes.filter(to_work_today=todayWM, to_work_normally=normalWM).count() + empCommutes.filter(from_work_today=todayWM, from_work_normally=normalWM).count()
             checkinMatrix[todayPos] += [numTypeCommutes,]
     return checkinMatrix
 
 def getBreakdown(emp, month):
-    pass
+    empSurveys = Commutersurvey.objects.filter(employer=emp, month=month)
+    unhealthySwitches = 0
+    carCommuters = 0
+    greenCommuters = 0
+    greenSwitches = 0
+    for survey in empSurveys:
+        if survey.to_work_switch == 1: unhealthySwitches += 1
+        elif survey.to_work_switch == 2: carCommuters += 1
+        elif survey.to_work_switch == 3: greenSwitches += 1
+        elif survey.to_work_switch == 4: greenSwitches += 1
+        if survey.from_work_switch == 1: unhealthySwitches += 1
+        elif survey.from_work_switch == 2: carCommuters += 1
+        elif survey.from_work_switch == 3: greenCommuters += 1
+        elif survey.from_work_switch == 4: greenSwitches += 1
+    return { 'us': unhealthySwitches, 'cc': carCommuters, 'gc': greenCommuters, 'gs': greenSwitches }
+
 
 def leaderboard_context(request, vol_v_perc='perc', month='all', svs='all', sos='1', focusEmployer=None):
     topFive = getTopFiveCompanies(vol_v_perc, month, svs, sos)
@@ -56,7 +71,7 @@ def leaderboard_context(request, vol_v_perc='perc', month='all', svs='all', sos=
         vvpMsg = '% participation'
     context = { 'top_five_companies': topFive, 'sectors': sorted(EmplSector.objects.all()), 'months': Month.objects.all(), 'selVVP': vol_v_perc, 'selMonth': month, 'selSOS': sos, 'selSVS': svs, 'vvpMsg': vvpMsg }
     return context
-    
+
 def leaderboard(request, vol_v_perc='all', month='all', svs='all', sos='1', focusEmployer=None):
     context = leaderboard_context(request, vol_v_perc, month, svs, sos, focusEmployer)
     return render(request, 'leaderboard/leaderboard.html', context)
