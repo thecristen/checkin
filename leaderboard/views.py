@@ -3,6 +3,7 @@ from survey.models import Commutersurvey, Employer, EmplSector
 from leaderboard.models import Month
 from django.shortcuts import render, get_object_or_404
 from operator import itemgetter
+import json
 
 def index(request):
     latest_check_ins = Commutersurvey.objects.order_by('month')[:5]
@@ -60,6 +61,54 @@ def getBreakdown(emp, month):
         elif survey.from_work_switch == 4: greenSwitches += 1
     return { 'us': unhealthySwitches, 'cc': carCommuters, 'gc': greenCommuters, 'gs': greenSwitches }
 
+def getMonths(emp):
+    return ['March 2013', 'April 2013', 'May 2013', 'June 2013', 'July 2013']
+
+def getCanvasJSChart(emp):
+    chartData = getCanvasJSChartData(emp)
+    barChart = {
+        'title': { 'text': "Walk Ride Day Participation Breakdown and New Checkins Over Time" },
+        'data': chartData
+    }
+    return json.dumps(chartData)
+
+def getCanvasJSChartData(emp):
+    chartData = [
+        {
+            'type': "stackedBar",
+            'legendText': "Green Switches",
+            'showInLegend': "true",
+            'dataPoints': [
+            ]
+        },
+        {
+            'type': "stackedBar",
+            'legendText': "Green Commutes",
+            'showInLegend': "true",
+            'dataPoints': [
+            ]
+        },
+        {
+            'type': "stackedBar",
+            'legendText': "Car Commutes",
+            'showInLegend': "true",
+            'dataPoints': [
+            ]
+        },
+        {
+            'type': "stackedBar",
+            'legendText': "Unhealthy Switches",
+            'showInLegend': "true",
+            'dataPoints': [
+            ]
+        }
+    ]
+    intToModeConversion = { 0:'gs', 1:'gc', 2:'cc', 3:'us' }
+    for month in getMoths(emp):
+        breakDown = getBreakDown(month)
+        for i in range(0, 4):
+            chartData[i]['dataPoints'] += [{ 'y': month, 'x': breakDown[intToModeConversion[i]]},]
+    return chartData
 
 def leaderboard_context(request, vol_v_perc='perc', month='all', svs='all', sos='1', focusEmployer=None):
     topFive = getTopFiveCompanies(vol_v_perc, month, svs, sos)
