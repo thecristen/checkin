@@ -400,9 +400,7 @@ $(document).ready(function() {
                     <div class="control-group">
                         <label class="control-label">Your email <span class="required_field">*</span>:</label>
                         <div class="controls">
-                            {{ surveyform.email }}<span class="help-inline">We may share information with your employer if you participate in the Corporate Challenge. Check box here if you want to remain private.</span>
-                            {{ surveyform.private }}
-                            <span class="help-inline">We will not share your identifying information with any other organization.</span>
+                            {{ surveyform.email }}<span class="help-inline">We will not share your identifying information with any organization other than with your employer if participating in the Corporate Challenge.</span>
                         </div>
                     </div>
                     <div class="control-group">
@@ -475,11 +473,11 @@ $(document).ready(function() {
                     <h3>How do you normally commute?</h3>
 
                     <div class="control-group">
-                        <label class="control-label">Normally to work by:</label>
+                        <label class="control-label">Normally to work by <span class="required_field">*</span>:</label>
                         <div class="controls">{{ surveyform.to_work_normally }}</div>
                     </div>
                     <div class="control-group">
-                        <label class="control-label">Normally from work by:</label>
+                        <label class="control-label">Normally from work by <span class="required_field">*</span>:</label>
                         <div class="controls">{{ surveyform.from_work_normally }}</div>
                     </div>
 
