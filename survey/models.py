@@ -1,5 +1,6 @@
 from django.contrib.gis.db import models
 from django.db.models import permalink
+from django.utils.text import slugify
 
 # lazy translation
 from django.utils.translation import ugettext_lazy as _
@@ -54,6 +55,9 @@ class EmplSector(models.Model):
         verbose_name = _('Employer Sector')
         verbose_name_plural = _('Employer Sectors')
 
+    @property 
+    def url_name(self):
+        return slugify(self.name)
     def __unicode__(self):
         return self.name
 
@@ -75,9 +79,11 @@ class Employer(models.Model):
     def __unicode__(self):
         return self.name
 
-    @property
-    def nr_surveys(self):
-        return Commutersurvey.objects.filter(employer__exact=self.name).count()
+    def nr_surveys(self, month):
+        if month != 'all':
+            return Commutersurver.objects.filter(employer__exact=self.name, month=month).count()
+        else:
+            return Commutersurvey.objects.filter(employer__exact=self.name).count()
 
  
 class Commutersurvey(models.Model):
@@ -121,6 +127,20 @@ class Commutersurvey(models.Model):
     class Meta:
         verbose_name = 'Commuter Survey'
         verbose_name_plural = 'Commuter Surveys'     
+
+    @property
+    def to_work_switch(self):
+        if self.to_work_today == 'c': tw = 1
+        else: tw = 3
+        if self.to_work_normally == 'c': tw += 1
+        return tw
+
+    @property
+    def from_work_switch(self):
+        if self.from_work_today == 'c': fw = 1
+        else: fw = 3
+        if self.to_work_normally == 'c': fw += 1
+        return fw
 
 
 class Schooldistrict(models.Model):

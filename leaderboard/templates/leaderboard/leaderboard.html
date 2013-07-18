@@ -8,13 +8,13 @@
         var vvpSelect = document.getElementById("id_vol_v_perc");
         var monthSelect = document.getElementById("id_month");
         var svsSelect = document.getElementById("id_svs");
-        var sectorSelect = document.getElementById("id_sector");
+        var sosSelect = document.getElementById("id_sos");
         var selVVP = vvpSelect.options[vvpSelect.selectedIndex].value;
         var selMonth = monthSelect.options[monthSelect.selectedIndex].value;
-        var selSize = svsSelect.options[svsSelect.selectedIndex].value;
-        var selSector = sectorSelect.options[sectorSelect.selectedIndex].value;
+        var selSVS = svsSelect.options[svsSelect.selectedIndex].value;
+        var selSOS = sosSelect.options[sosSelect.selectedIndex].value;
         var hostname = top.location.host.toString();
-        var selections = "/leaderboard/" + selMonth + "/" + selVVP + "/" + selSize + "/" + selSector;
+        var selections = "/leaderboard/" + selMonth + "/" + selVVP + "/" + selSVS + "/" + selSOS;
         var url = "http://" + hostname + selections;
         document.location.href = url;
     }
@@ -31,7 +31,7 @@
                 <div class="row">
                     <div class="control-group span3"> 
                         <label class="control-label"><strong>Select by volume or percent:</strong></label><div class="controls span3">
-                            <select id="id_vol_v_perc" name="vol_v_perc" selected="{{ selVVP }}">
+                            <select id="id_vol_v_perc" name="vol_v_perc" >
                                 <option value="perc">By Percent</option>
                                 <option value="vol">By Volume</option>
                             </select>
@@ -49,7 +49,7 @@
                     </div>
                     <div class="control-group span3">
                         <label class="control-label"><strong>Select By Size or By Sector:</strong></label> <div class="controls span3">
-                            <select id=id_svs" name='svs'>
+                            <select id="id_svs" name='svs'>
                                 <option value="all">-- ALL --</option>
                                 <option value="bysize">By Size</option>
                                 <option value="bysector">By Sector</option>
@@ -57,7 +57,12 @@
                         </div>
                     </div>
                     {% if selSVS == "all" %}
-                    <div class="control-group span3">
+                    <div class="control-group span3 hidden">
+                        <div class="controls span3">
+                            <select id="id_sos" name="sos">
+                                <option value="all"></option>
+                            </select>
+                        </div>
                     </div>
                     {% elif selSVS == "size" %}
                     <div class="control-group span3">
@@ -99,8 +104,126 @@
             </div>
         </div>
     </div>
-    <div class="span6">
-        
+    <div class="span6" id="companyHeader">
+        <h3 id="companyName">No Company Selected</h3>
+    </div>
+    <div class="span6" id="breakDownGraph">
+    </div>
+    <div class="span2" id="totalBreakDown">
+        <table class="table">
+            <tr>
+                <th id="totals"><h4>Totals: </h4></th>
+            </tr>
+            <tr>
+                <td><div class="gc text-right">Total Checkins:</div></td>
+                <td class="gc" id="total_checkins"></td>
+            </tr>
+            <tr>
+                <td><div class="gs text-right">Green Switches:</div></td>
+                <td class="gc" id="total_gs"></td>
+            </tr>
+            <tr>
+                <td><div class="gc text-right">Green Commuters:</div></td>
+                <td class="gc" id="total_gs"></td>
+            </tr>
+            <tr>
+                <td><div class="cc text-right">Car Commuters:</div></td>
+                <td class="cc" id="total_cc"></td>
+            </tr>
+            <tr>
+                <td><div class="us text-right">Unhealthy Switches:</div></td>
+                <td class="us" id="total_us"></td>
+            </tr>
+        </table>
+    </div>
+    <div class="span4" id="breakDownTable">
+        <table class="table table-bordered">
+            <tr>
+                <td></td>
+                <td><img src="/static/img/c.png" height="32" width="32" class="img-circle"></img></td>
+                <td><img src="/static/img/cp.png" height="32" width="32" class="img-circle"></img></td>
+                <td><img src="/static/img/w.png" height="32" width="32" class="img-circle"></img></td>
+                <td><img src="/static/img/b.png" height="32" width="32" class="img-circle"></img></td>
+                <td><img src="/static/img/t.png" height="32" width="32" class="img-circle"></img></td>
+                <td><img src="/static/img/tc.png" height="32" width="32" class="img-circle"></img></td>
+                <td><img src="/static/img/o.png" height="32" width="32" class="img-circle"></img></td>
+            </tr>
+            <tr class="error">
+                <td><img src="/static/img/c.png" height="32" width="32" class="img-circle"></img></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="success">
+                <td><img src="/static/img/cp.png" height="32" width="32" class="img-circle"></img></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="success">
+                <td><img src="/static/img/w.png" height="32" width="32" class="img-circle"></img></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="success">
+                <td><img src="/static/img/b.png" height="32" width="32" class="img-circle"></img></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="success">
+                <td><img src="/static/img/t.png" height="32" width="32" class="img-circle"></img></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="success">
+                <td><img src="/static/img/tc.png" height="32" width="32" class="img-circle"></img></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="success">
+                <td><img src="/static/img/o.png" height="32" width="32" class="img-circle"></img></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </table>
     </div>
 </div>
+<style type="text/css">
+    .labelHeader {
+        text-align: right;
+    }
+</style>
 {% endblock %}
