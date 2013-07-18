@@ -26,6 +26,7 @@ def getCJSEmplList(month):
                 'color': '#0096FF',
                 'legendText': 'Green Switches',
                 'showInLegend': 'true',
+                'toolTipContent': '{name}: {y}',
                 'dataPoints': [
                 ]
             },
@@ -34,6 +35,7 @@ def getCJSEmplList(month):
                 'color': '#65AB4B',
                 'legendText': 'Green Commuters',
                 'showInLegend': 'true',
+                'toolTipContent': '{name}: {y}',
                 'dataPoints': [
                 ]
             },
@@ -42,6 +44,7 @@ def getCJSEmplList(month):
                 'color': '#FF2600',
                 'legendText': 'Car Commuters',
                 'showInLegend': 'true',
+                'toolTipContent': '{name}: {y}',
                 'dataPoints': [
                 ]
             },
@@ -50,16 +53,18 @@ def getCJSEmplList(month):
                 'color': '#9437FF',
                 'legendText': 'Unhealthy Switches',
                 'showInLegend': 'true',
+                'toolTipContent': '{name}: {y}',
                 'dataPoints': [
                 ]
             },
         ]
     }
     breakDownTranslator = [ 'gs', 'gc', 'cc', 'us' ]
+    longBDT = [ 'Green Switches', 'Green Commuters', 'Car Commuters', 'Unhealthy Switches' ]
     for emp in Employer.objects.filter(active=True).reverse():
         breakDown = getBreakDown(emp, month)
         for i in range(0, 4):
-            chart['data'][i]['dataPoints'] += [{ 'label': emp.name, 'y': breakDown[breakDownTranslator[i]] },]
+            chart['data'][i]['dataPoints'] += [{ 'label': emp.name, 'name': longBDT[i], 'y': breakDown[breakDownTranslator[i]] },]
     return json.dumps(chart)
 
 def empBreakDown(request, month):
@@ -68,6 +73,6 @@ def empBreakDown(request, month):
     return render(request, 'leaderboardlist/leaderboardlist.html', context)
     
 def chooseMonth(request):
-    months = getMonths
+    months = getMonths()
     context = { 'months': months }
     return render(request, 'leaderboardlist/chooseMonths.html', context)
