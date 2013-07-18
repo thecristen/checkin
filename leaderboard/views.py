@@ -62,7 +62,7 @@ def getBreakDown(emp, month):
     return { 'us': unhealthySwitches, 'cc': carCommuters, 'gc': greenCommuters, 'gs': greenSwitches }
 
 def getMonths(emp):
-    return ['March 2013', 'April 2013', 'May 2013', 'June 2013', 'July 2013']
+    return ['April 2013', 'May 2013', 'June 2013', 'July 2013']
 
 def getCanvasJSChart(emp):
     chartData = getCanvasJSChartData(emp)
