@@ -102,10 +102,10 @@ class Commutersurvey(models.Model):
     distance = models.DecimalField(max_digits=10, decimal_places=1, blank=True, null=True)
     duration = models.DecimalField(max_digits=10, decimal_places=1, blank=True, null=True)
     
-    to_work_today = models.CharField(max_length=2, blank=True, null=True, choices=COMMUTER_MODES)
-    from_work_today = models.CharField(max_length=2, blank=True, null=True, choices=COMMUTER_MODES)  
-    to_work_normally = models.CharField(max_length=2, blank=True, null=True, choices=COMMUTER_MODES)
-    from_work_normally = models.CharField(max_length=2, blank=True, null=True, choices=COMMUTER_MODES) 
+    to_work_today = models.CharField(max_length=2, blank=False, null=True, choices=COMMUTER_MODES)
+    from_work_today = models.CharField(max_length=2, blank=False, null=True, choices=COMMUTER_MODES)  
+    to_work_normally = models.CharField(max_length=2, blank=False, null=True, choices=COMMUTER_MODES)
+    from_work_normally = models.CharField(max_length=2, blank=False, null=True, choices=COMMUTER_MODES) 
 
     other_greentravel = models.BooleanField(default=False)
     
