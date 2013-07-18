@@ -19,7 +19,7 @@ def getTopFiveCompanies(vvp, month, svs, sos):
     elif svs == 'sector':
         emps = Employer.objects.filter(sector=sos)
     companyList = []
-    if vol_v_perc == 'perc':
+    if vvp == 'perc':
         for company in emps:
             try:
                 companyList += [(company.name, ('%.1f' % (100 * (company.nr_surveys(month) + 0.0)/(company.nr_employees + 0.0)))),]
@@ -44,7 +44,7 @@ def getEmpCheckinMatrix(emp):
             checkinMatrix[todayPos] += [numTypeCommutes,]
     return checkinMatrix
 
-def getBreakdown(emp, month):
+def getBreakDown(emp, month):
     empSurveys = Commutersurvey.objects.filter(employer=emp, month=month)
     unhealthySwitches = 0
     carCommuters = 0
@@ -53,7 +53,7 @@ def getBreakdown(emp, month):
     for survey in empSurveys:
         if survey.to_work_switch == 1: unhealthySwitches += 1
         elif survey.to_work_switch == 2: carCommuters += 1
-        elif survey.to_work_switch == 3: greenSwitches += 1
+        elif survey.to_work_switch == 3: greenCommuters += 1
         elif survey.to_work_switch == 4: greenSwitches += 1
         if survey.from_work_switch == 1: unhealthySwitches += 1
         elif survey.from_work_switch == 2: carCommuters += 1
@@ -68,35 +68,36 @@ def getCanvasJSChart(emp):
     chartData = getCanvasJSChartData(emp)
     barChart = {
         'title': { 'text': "Walk Ride Day Participation Breakdown and New Checkins Over Time" },
+        'colorSet': 'commuterModes',
         'data': chartData
     }
-    return json.dumps(chartData)
+    return json.dumps(barChart)
 
 def getCanvasJSChartData(emp):
     chartData = [
         {
-            'type': "stackedBar",
+            'type': "stackedColumn",
             'legendText': "Green Switches",
             'showInLegend': "true",
             'dataPoints': [
             ]
         },
         {
-            'type': "stackedBar",
+            'type': "stackedColumn",
             'legendText': "Green Commutes",
             'showInLegend': "true",
             'dataPoints': [
             ]
         },
         {
-            'type': "stackedBar",
+            'type': "stackedColumn",
             'legendText': "Car Commutes",
             'showInLegend': "true",
             'dataPoints': [
             ]
         },
         {
-            'type': "stackedBar",
+            'type': "stackedColumn",
             'legendText': "Unhealthy Switches",
             'showInLegend': "true",
             'dataPoints': [
@@ -104,10 +105,10 @@ def getCanvasJSChartData(emp):
         }
     ]
     intToModeConversion = { 0:'gs', 1:'gc', 2:'cc', 3:'us' }
-    for month in getMoths(emp):
-        breakDown = getBreakDown(month)
+    for month in getMonths(emp):
+        breakDown = getBreakDown(emp, month)
         for i in range(0, 4):
-            chartData[i]['dataPoints'] += [{ 'y': month, 'x': breakDown[intToModeConversion[i]]},]
+            chartData[i]['dataPoints'] += [{ 'label': month, 'y': breakDown[intToModeConversion[i]]},]
     return chartData
 
 def leaderboard_context(request, vol_v_perc='perc', month='all', svs='all', sos='1', focusEmployer=None):
@@ -118,7 +119,7 @@ def leaderboard_context(request, vol_v_perc='perc', month='all', svs='all', sos=
         vvpMsg = ' checkins'
     else:
         vvpMsg = '% participation'
-    context = { 'top_five_companies': topFive, 'sectors': sorted(EmplSector.objects.all()), 'months': Month.objects.all(), 'selVVP': vol_v_perc, 'selMonth': month, 'selSOS': sos, 'selSVS': svs, 'vvpMsg': vvpMsg }
+    context = { 'CHART_DATA': getCanvasJSChart(Employer.objects.get(name="Dana-Farber Cancer Institute")), 'top_five_companies': topFive, 'sectors': sorted(EmplSector.objects.all()), 'months': getMonths(focusEmployer), 'selVVP': vol_v_perc, 'selMonth': month, 'selSOS': sos, 'selSVS': svs, 'vvpMsg': vvpMsg }
     return context
 
 def leaderboard(request, vol_v_perc='all', month='all', svs='all', sos='1', focusEmployer=None):
@@ -129,6 +130,9 @@ def leaderboard_bare(request, vol_v_perc='all', month='all', svs='all', sos='1',
     context = leaderboard_context(request, vol_v_perc, month, svs, sos, focusEmployer)
     return render(request, 'leaderboard/leaderboard_bare.html', context)
 
+def testchart(request):
+    context = { 'CHART_DATA': getCanvasJSChart(Employer.objects.get(name="Dana-Farber Cancer Institute")) }
+    return render(request, 'leaderboard/testchart.html', context)
 
 def whichSwitch(checkin): # 1=Unhealthy, 2=Car Commuter, 3=Green Commuter, 4=Green Switch
     """returns a tuple of (to_work, from_work)"""
