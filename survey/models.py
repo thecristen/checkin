@@ -78,8 +78,11 @@ class Employer(models.Model):
 
     def __unicode__(self):
         return self.name
+    @property
+    def nr_surveys(self):
+            return Commutersurvey.objects.filter(employer__exact=self.name).count()
 
-    def nr_surveys(self, month):
+    def get_nr_surveys(self, month):
         if month != 'all':
             return Commutersurver.objects.filter(employer__exact=self.name, month=month).count()
         else:
