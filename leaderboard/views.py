@@ -59,7 +59,7 @@ def getBreakDown(emp, month):
         elif survey.from_work_switch == 2: carCommuters += 1
         elif survey.from_work_switch == 3: greenCommuters += 1
         elif survey.from_work_switch == 4: greenSwitches += 1
-    return { 'us': unhealthySwitches, 'cc': carCommuters, 'gc': greenCommuters, 'gs': greenSwitches }
+    return { 'us': unhealthySwitches, 'cc': carCommuters, 'gc': greenCommuters, 'gs': greenSwitches, 'total':(len(empSurveys)*2) }
 
 def getMonths(emp):
     return ['April 2013', 'May 2013', 'June 2013', 'July 2013']
