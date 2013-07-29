@@ -15,19 +15,21 @@ def getTopFiveCompanies(vvp, month, svs, sos):
     if svs == 'all':
         emps = Employer.objects.all()
     elif svs == 'size':
-        emps = Employer.objects.filter(size=sos)
+        emps = Employer.objects.filter(size_cat=sos)
     elif svs == 'sector':
         emps = Employer.objects.filter(sector=sos)
     companyList = []
     if vvp == 'perc':
         for company in emps:
             try:
-                companyList += [(company.name, ('%.1f' % (100 * (company.nr_surveys(month) + 0.0)/(company.nr_employees + 0.0)))),]
+                percent = (100 * float(company.get_nr_surveys(month))/float(company.nr_employees))
+                companyList += [(company.name, percent, ('%.1f' % percent)),]
             except TypeError:
                 pass
     else:
         for company in emps:
-            companyList += [(company.name, str(company.nr_surveys(month))),]
+            nr_surveys = company.get_nr_surveys(month)
+            companyList += [(company.name, nr_surveys, str(nr_surveys)),]
     topFive = sorted(companyList, key=itemgetter(1), reverse=True)[:5]
     return topFive
 
@@ -59,6 +61,7 @@ def getBreakDown(emp, month):
         elif survey.from_work_switch == 2: carCommuters += 1
         elif survey.from_work_switch == 3: greenCommuters += 1
         elif survey.from_work_switch == 4: greenSwitches += 1
+        #if 
     return { 'us': unhealthySwitches, 'cc': carCommuters, 'gc': greenCommuters, 'gs': greenSwitches, 'total':(len(empSurveys)*2) }
 
 def getMonths(emp):
@@ -111,7 +114,7 @@ def getCanvasJSChartData(emp):
             chartData[i]['dataPoints'] += [{ 'label': month, 'y': breakDown[intToModeConversion[i]]},]
     return chartData
 
-def leaderboard_context(request, vol_v_perc='perc', month='all', svs='all', sos='1', focusEmployer=None):
+def leaderboard_context(vol_v_perc, month, svs, sos, focusEmployer=None):
     topFive = getTopFiveCompanies(vol_v_perc, month, svs, sos)
     if focusEmployer == None and len(topFive) > 0:
         focusEmployer = topFive[0]
@@ -122,8 +125,9 @@ def leaderboard_context(request, vol_v_perc='perc', month='all', svs='all', sos=
     context = { 'CHART_DATA': getCanvasJSChart(Employer.objects.get(name="Dana-Farber Cancer Institute")), 'top_five_companies': topFive, 'sectors': sorted(EmplSector.objects.all()), 'months': getMonths(focusEmployer), 'selVVP': vol_v_perc, 'selMonth': month, 'selSOS': sos, 'selSVS': svs, 'vvpMsg': vvpMsg }
     return context
 
-def leaderboard(request, vol_v_perc='all', month='all', svs='all', sos='1', focusEmployer=None):
-    context = leaderboard_context(request, vol_v_perc, month, svs, sos, focusEmployer)
+def leaderboard(request):
+    if request.method == "POST":
+        context = leaderboard_context(request.POST['selVVP'], request.POST['selMonth'], request.POST['selSVS'], request.POST['selSOS'], request.POST['focusEmployer'])
     return render(request, 'leaderboard/leaderboard.html', context)
 
 def leaderboard_bare(request, vol_v_perc='all', month='all', svs='all', sos='1', focusEmployer=None):
