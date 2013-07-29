@@ -1,6 +1,6 @@
 # Create your views here.
 from survey.models import Employer, Commutersurvey
-from leaderboard.views import getBreakDown, getCanvasJSChart, getMonths
+from leaderboard.views import getBreakDown, getMonths
 from django.shortcuts import render
 from leaderboard.models import Month
 import json
