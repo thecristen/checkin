@@ -116,7 +116,7 @@ class Commutersurvey(models.Model):
     email = models.EmailField(blank=True, null=True)
     #private = models.BooleanField(default=False)
     newsletter = models.BooleanField(default=True)
-    employer = models.CharField('Employer', max_length=100, blank=True, null=True)
+    employer = models.CharField('Employer', max_length=100, blank=False, null=True)
     weight = models.DecimalField(max_digits=5, decimal_places=1, blank=True, null=True)
     
     ip = models.IPAddressField('IP Address', blank=True, null=True)
