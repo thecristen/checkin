@@ -26,7 +26,7 @@ def getCJSEmplList(month):
                 'color': '#0096FF',
                 'legendText': 'Green Switches',
                 'showInLegend': 'true',
-                'toolTipContent': '{name}: {y}',
+                'toolTipContent': '{name}: {y} ({perc}%)',
                 'dataPoints': [
                 ]
             },
@@ -35,7 +35,7 @@ def getCJSEmplList(month):
                 'color': '#65AB4B',
                 'legendText': 'Green Commutes',
                 'showInLegend': 'true',
-                'toolTipContent': '{name}: {y}',
+                'toolTipContent': '{name}: {y} ({perc}%)',
                 'dataPoints': [
                 ]
             },
@@ -44,7 +44,7 @@ def getCJSEmplList(month):
                 'color': '#FF2600',
                 'legendText': 'Car Commutes',
                 'showInLegend': 'true',
-                'toolTipContent': '{name}: {y}',
+                'toolTipContent': '{name}: {y} ({perc}%)',
                 'dataPoints': [
                 ]
             },
@@ -53,7 +53,7 @@ def getCJSEmplList(month):
                 'color': '#9437FF',
                 'legendText': 'Other',
                 'showInLegend': 'true',
-                'toolTipContent': '{name}: {y}',
+                'toolTipContent': '{name}: {y} ({perc}%)',
                 'dataPoints': [
                 ]
             },
@@ -64,7 +64,13 @@ def getCJSEmplList(month):
     for emp in Employer.objects.filter(active=True).reverse():
         breakDown = getBreakDown(emp, month)
         for i in range(0, 4):
-            chart['data'][i]['dataPoints'] += [{ 'label': emp.name, 'name': longBDT[i], 'y': breakDown[breakDownTranslator[i]] },]
+            y = breakDown[breakDownTranslator[i]]
+            print breakDown['total']
+            if breakDown['total'] != 0:
+                perc = "%.1f" % (100*(float(y)/float(breakDown['total'])),)
+            else:
+                perc = "0"
+            chart['data'][i]['dataPoints'] += [{ 'label': emp.name, 'name': longBDT[i], 'y': y, 'perc': perc },]
     return json.dumps(chart)
 
 def empBreakDown(request, month):
