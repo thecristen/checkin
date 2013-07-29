@@ -33,7 +33,7 @@ def getCJSEmplList(month):
             {
                 'type': 'stackedBar',
                 'color': '#65AB4B',
-                'legendText': 'Green Commuters',
+                'legendText': 'Green Commutes',
                 'showInLegend': 'true',
                 'toolTipContent': '{name}: {y}',
                 'dataPoints': [
@@ -42,7 +42,7 @@ def getCJSEmplList(month):
             {
                 'type': 'stackedBar',
                 'color': '#FF2600',
-                'legendText': 'Car Commuters',
+                'legendText': 'Car Commutes',
                 'showInLegend': 'true',
                 'toolTipContent': '{name}: {y}',
                 'dataPoints': [
@@ -51,7 +51,7 @@ def getCJSEmplList(month):
             {
                 'type': 'stackedBar',
                 'color': '#9437FF',
-                'legendText': 'Unhealthy Switches',
+                'legendText': 'Other',
                 'showInLegend': 'true',
                 'toolTipContent': '{name}: {y}',
                 'dataPoints': [
@@ -60,7 +60,7 @@ def getCJSEmplList(month):
         ]
     }
     breakDownTranslator = [ 'gs', 'gc', 'cc', 'us' ]
-    longBDT = [ 'Green Switches', 'Green Commuters', 'Car Commuters', 'Unhealthy Switches' ]
+    longBDT = [ 'Green Switches', 'Green Commutes', 'Car Commutes', 'Other' ]
     for emp in Employer.objects.filter(active=True).reverse():
         breakDown = getBreakDown(emp, month)
         for i in range(0, 4):
