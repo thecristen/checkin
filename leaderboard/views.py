@@ -2,6 +2,7 @@
 from survey.models import Commutersurvey, Employer, EmplSector
 from leaderboard.models import Month
 from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponse
 from operator import itemgetter
 import json
 
@@ -35,19 +36,21 @@ def getTopFiveCompanies(vvp, month, svs, sos):
 
 def getEmpCheckinMatrix(emp): 
     commuterModes = ['c', 'cp', 'w', 'b', 't', 'tc', 'o']
-    checkinMatrix = []
+    checkinMatrix = {}
     todayPos = -1
     empCommutes = Commutersurvey.objects.filter(employer__contains=emp.name)
     for todayWM in commuterModes:
-        todayPos += 1
-        checkinMatrix += [[],]
+        checkinMatrix[todayWM] = {}
         for normalWM in commuterModes:
             numTypeCommutes = empCommutes.filter(to_work_today=todayWM, to_work_normally=normalWM).count() + empCommutes.filter(from_work_today=todayWM, from_work_normally=normalWM).count()
-            checkinMatrix[todayPos] += [numTypeCommutes,]
+            checkinMatrix[todayWM][normalWM] = numTypeCommutes
     return checkinMatrix
 
 def getBreakDown(emp, month):
-    empSurveys = Commutersurvey.objects.filter(employer=emp, month=month)
+    if month == "all":
+        empSurveys = Commutersurvey.objects.filter(employer=emp)
+    else:
+        empSurveys = Commutersurvey.objects.filter(employer=emp, month=month)
     unhealthySwitches = 0
     carCommuters = 0
     greenCommuters = 0
@@ -65,6 +68,9 @@ def getBreakDown(emp, month):
     return { 'us': unhealthySwitches, 'cc': carCommuters, 'gc': greenCommuters, 'gs': greenSwitches, 'total':(len(empSurveys)*2) }
 
 def getMonths(emp):
+    return ['April 2013', 'May 2013', 'June 2013', 'July 2013']
+
+def getAllMonths():
     return ['April 2013', 'May 2013', 'June 2013', 'July 2013']
 
 def getCanvasJSChart(emp):
@@ -114,21 +120,41 @@ def getCanvasJSChartData(emp):
             chartData[i]['dataPoints'] += [{ 'label': month, 'y': breakDown[intToModeConversion[i]]},]
     return chartData
 
-def leaderboard_context(vol_v_perc, month, svs, sos, focusEmployer=None):
+def leaderboard_reply_data(vol_v_perc, month, svs, sos, focusEmployer=None):
     topFive = getTopFiveCompanies(vol_v_perc, month, svs, sos)
-    if focusEmployer == None and len(topFive) > 0:
+    if focusEmployer is None and len(topFive) > 0:
         focusEmployer = topFive[0]
-    if vol_v_perc == 'vol':
-        vvpMsg = ' checkins'
-    else:
-        vvpMsg = '% participation'
-    context = { 'CHART_DATA': getCanvasJSChart(Employer.objects.get(name="Dana-Farber Cancer Institute")), 'top_five_companies': topFive, 'sectors': sorted(EmplSector.objects.all()), 'months': getMonths(focusEmployer), 'selVVP': vol_v_perc, 'selMonth': month, 'selSOS': sos, 'selSVS': svs, 'vvpMsg': vvpMsg }
+        print focusEmployer[0]
+        emp = Employer.objects.get(name=focusEmployer[0])
+    elif type(focusEmployer) is str:
+        emp = Employer.objects.get(name=focusEmployer)
+    elif type(focusEmployer) is Employer:
+        emp = focusEmployer
+    reply_data = { 
+            'chart_data': getCanvasJSChart(emp), 
+            'top_five_companies': json.dumps(topFive), 
+            'checkin_matrix': json.dumps(getEmpCheckinMatrix(emp)),
+            'total_breakdown': json.dumps(getBreakDown(emp, "all")),
+    }
+    return reply_data
+
+def leaderboard_context():
+    context = {
+            'sectors': sorted(EmplSector.objects.all()), 
+            'months': getAllMonths(),
+    }
     return context
 
 def leaderboard(request):
     if request.method == "POST":
-        context = leaderboard_context(request.POST['selVVP'], request.POST['selMonth'], request.POST['selSVS'], request.POST['selSOS'], request.POST['focusEmployer'])
-    return render(request, 'leaderboard/leaderboard.html', context)
+        reply_data = leaderboard_reply_data(request.POST['selVVP'], request.POST['selMonth'], request.POST['selSVS'], request.POST['selSOS'], request.POST['focusEmployer'])
+        response = HttpResponse("")
+        for key in reply_data:
+            response.__setitem__(key, reply_data[key])
+        return response
+    else:
+        context = leaderboard_context()
+        return render(request, 'leaderboard/leaderboard_js.html', context)
 
 def leaderboard_bare(request, vol_v_perc='all', month='all', svs='all', sos='1', focusEmployer=None):
     context = leaderboard_context(request, vol_v_perc, month, svs, sos, focusEmployer)
