@@ -56,13 +56,15 @@ function makeChange(data, status) {
         $(".vvpMsg").text('% participation');
     }
     else {
-        vvpMsg = ' checkins';
+        $(".vvpMsg").text(' check-ins');
     }
     for(var i=0; i<5; i++) {
         $("#emp"+i.toString()).text(data.top_five_companies[i][0]);
         $("#emp"+i.toString()+"num").text(data.top_five_companies[i][2]);
     }
     newEmp(data, status);
+    $("#top_five_nav>li.active").removeClass("active");
+    $("#top_five_nav>li:eq(0)").addClass("active");
 }    
 function newEmp(data, status) {
     $("#companyName").text($("#top_five_nav>li.active>a>h4>span:eq(0)").text());
@@ -196,7 +198,7 @@ String.prototype.format = function() {
                         <th id="totals"><h4>Totals: </h4></th>
                     </tr>
                     <tr>
-                        <td><div class="gc text-right">Total Checkins:</div></td>
+                        <td><div class="gc text-right">Commutes:</div></td>
                         <td class="gc" id="total_checkins"></td>
                     </tr>
                     <tr>
