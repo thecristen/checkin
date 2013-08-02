@@ -81,7 +81,7 @@ def getCanvasJSChart(emp):
     chartData = getCanvasJSChartData(emp)
     barChart = {
         'title': { 
-            'text': "Walk Ride Day Participation Breakdown and New Checkins Over Time",
+            'text': "Walk Ride Day Participation Breakdown Over Time",
             'fontSize': 20 },
         'colorSet': 'commuterModes',
         'data': chartData
