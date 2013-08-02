@@ -2,6 +2,7 @@
 from survey.models import Commutersurvey, Employer, EmplSector
 from leaderboard.models import Month
 from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponse
 from operator import itemgetter
 import json
 
@@ -47,7 +48,10 @@ def getEmpCheckinMatrix(emp):
     return checkinMatrix
 
 def getBreakDown(emp, month):
-    empSurveys = Commutersurvey.objects.filter(employer=emp, month=month)
+    if month == "all":
+        empSurveys = Commutersurvey.objects.filter(employer=emp)
+    else:
+        empSurveys = Commutersurvey.objects.filter(employer=emp, month=month)
     unhealthySwitches = 0
     carCommuters = 0
     greenCommuters = 0
@@ -67,68 +71,118 @@ def getBreakDown(emp, month):
 def getMonths(emp):
     return ['April 2013', 'May 2013', 'June 2013', 'July 2013']
 
+def getAllMonths():
+    return [{'month': 'April 2013', 'url_month': 'april-2013'},
+            {'month': 'May 2013', 'url_month': 'may-2013'},
+            {'month': 'June 2013', 'url_month': 'june-2013'},
+            {'month': 'July 2013', 'url_month': 'june-2013'}]
+
 def getCanvasJSChart(emp):
     chartData = getCanvasJSChartData(emp)
     barChart = {
-        'title': { 'text': "Walk Ride Day Participation Breakdown and New Checkins Over Time" },
+        'title': { 
+            'text': "Walk Ride Day Participation Breakdown and New Checkins Over Time",
+            'fontSize': 20 },
         'colorSet': 'commuterModes',
         'data': chartData
     }
-    return json.dumps(barChart)
+    return barChart
 
 def getCanvasJSChartData(emp):
     chartData = [
         {
             'type': "stackedColumn",
+            'color': '#0096FF',
             'legendText': "Green Switches",
             'showInLegend': "true",
+            'toolTipContent': '{name}: {y}',
             'dataPoints': [
             ]
         },
         {
             'type': "stackedColumn",
+            'color': '#65AB4B',
             'legendText': "Green Commutes",
             'showInLegend': "true",
+            'toolTipContent': '{name}: {y}',
             'dataPoints': [
             ]
         },
         {
             'type': "stackedColumn",
+            'color': '#FF2600',
             'legendText': "Car Commutes",
             'showInLegend': "true",
+            'toolTipContent': '{name}: {y}',
             'dataPoints': [
             ]
         },
         {
             'type': "stackedColumn",
-            'legendText': "Unhealthy Switches",
+            'color': '#9437FF',
+            'legendText': "Other",
             'showInLegend': "true",
+            'toolTipContent': '{name}: {y}',
             'dataPoints': [
             ]
         }
     ]
-    intToModeConversion = { 0:'gs', 1:'gc', 2:'cc', 3:'us' }
+    intToModeConversion = ['gs', 'gc', 'cc', 'us']
+    iTMSConv = ['Green Switches','Green Commuters', 'Car Commuters', 'Other']
     for month in getMonths(emp):
         breakDown = getBreakDown(emp, month)
         for i in range(0, 4):
-            chartData[i]['dataPoints'] += [{ 'label': month, 'y': breakDown[intToModeConversion[i]]},]
+            chartData[i]['dataPoints'] += [{ 'label': month, 'y': breakDown[intToModeConversion[i]], 'name': iTMSConv[i] },]
     return chartData
 
-def leaderboard_context(vol_v_perc, month, svs, sos, focusEmployer=None):
-    topFive = getTopFiveCompanies(vol_v_perc, month, svs, sos)
-    if focusEmployer == None and len(topFive) > 0:
+def leaderboard_reply_data(vol_v_perc, month, svs, sos, focusEmployer=None):
+    topFive = getTopFiveCompanies(vol_v_perc, month, svs, sos) 
+    if focusEmployer is None and len(topFive) > 0:
         focusEmployer = topFive[0]
-    if vol_v_perc == 'vol':
-        vvpMsg = ' checkins'
-    else:
-        vvpMsg = '% participation'
-    context = { 'CHART_DATA': getCanvasJSChart(Employer.objects.get(name="Dana-Farber Cancer Institute")), 'top_five_companies': topFive, 'sectors': sorted(EmplSector.objects.all()), 'months': getMonths(focusEmployer), 'selVVP': vol_v_perc, 'selMonth': month, 'selSOS': sos, 'selSVS': svs, 'vvpMsg': vvpMsg }
+        emp = Employer.objects.get(name=focusEmployer[0])
+    elif type(focusEmployer) is str:
+        emp = Employer.objects.get(name=focusEmployer)
+    elif type(focusEmployer) is Employer:
+        emp = focusEmployer
+    reply_data = { 
+            'chart_data': getCanvasJSChart(emp), 
+            'top_five_companies': topFive, 
+            'checkin_matrix': getEmpCheckinMatrix(emp),
+            'total_breakdown': getBreakDown(emp, "all"),
+            'vol_v_perc': vol_v_perc,
+            'month': month,
+            'svs': svs,
+            'sos': sos,
+    }
+    return reply_data
+
+def leaderboard_company_detail(empName):
+    emp = Employer.objects.get(name=empName)
+    reply_data = {
+            'chart_data': getCanvasJSChart(emp),
+            'checkin_matrix': getEmpCheckinMatrix(emp),
+            'total_breakdown': getBreakDown(emp, "all"),
+    }
+    return reply_data
+
+def leaderboard_context():
+    context = {
+            'sectors': sorted(EmplSector.objects.all()), 
+            'months': getAllMonths(),
+    }
     return context
 
 def leaderboard(request):
     if request.method == "POST":
-        context = leaderboard_context(request.POST['selVVP'], request.POST['selMonth'], request.POST['selSVS'], request.POST['selSOS'], request.POST['focusEmployer'])
-    return render(request, 'leaderboard/leaderboard.html', context)
+        if request.POST['just_emp'] == 'false':
+            reply_data = leaderboard_reply_data(request.POST['selVVP'], request.POST['selMonth'], request.POST['selSVS'], request.POST['selSOS'],)
+        else:
+            reply_data = leaderboard_company_detail(request.POST['focusEmployer'])
+        response = HttpResponse(json.dumps(reply_data), content_type='application/json')
+        return response
+    else:
+        context = leaderboard_context()
+        return render(request, 'leaderboard/leaderboard_js.html', context)
 
 def leaderboard_bare(request, vol_v_perc='all', month='all', svs='all', sos='1', focusEmployer=None):
     context = leaderboard_context(request, vol_v_perc, month, svs, sos, focusEmployer)
