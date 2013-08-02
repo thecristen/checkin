@@ -36,14 +36,15 @@ def getTopFiveCompanies(vvp, month, svs, sos):
 
 def getEmpCheckinMatrix(emp): 
     commuterModes = ['c', 'cp', 'w', 'b', 't', 'tc', 'o']
-    checkinMatrix = {}
+    checkinMatrix = []
     todayPos = -1
     empCommutes = Commutersurvey.objects.filter(employer__contains=emp.name)
     for todayWM in commuterModes:
-        checkinMatrix[todayWM] = {}
+        todayPos += 1
+        checkinMatrix += [[],]
         for normalWM in commuterModes:
             numTypeCommutes = empCommutes.filter(to_work_today=todayWM, to_work_normally=normalWM).count() + empCommutes.filter(from_work_today=todayWM, from_work_normally=normalWM).count()
-            checkinMatrix[todayWM][normalWM] = numTypeCommutes
+            checkinMatrix[todayPos] += [numTypeCommutes,]
     return checkinMatrix
 
 def getBreakDown(emp, month):
@@ -71,7 +72,10 @@ def getMonths(emp):
     return ['April 2013', 'May 2013', 'June 2013', 'July 2013']
 
 def getAllMonths():
-    return ['April 2013', 'May 2013', 'June 2013', 'July 2013']
+    return [{'month': 'April 2013', 'url_month': 'april-2013'},
+            {'month': 'May 2013', 'url_month': 'may-2013'},
+            {'month': 'June 2013', 'url_month': 'june-2013'},
+            {'month': 'July 2013', 'url_month': 'june-2013'}]
 
 def getCanvasJSChart(emp):
     chartData = getCanvasJSChartData(emp)
@@ -80,7 +84,7 @@ def getCanvasJSChart(emp):
         'colorSet': 'commuterModes',
         'data': chartData
     }
-    return json.dumps(barChart)
+    return barChart
 
 def getCanvasJSChartData(emp):
     chartData = [
@@ -132,9 +136,13 @@ def leaderboard_reply_data(vol_v_perc, month, svs, sos, focusEmployer=None):
         emp = focusEmployer
     reply_data = { 
             'chart_data': getCanvasJSChart(emp), 
-            'top_five_companies': json.dumps(topFive), 
-            'checkin_matrix': json.dumps(getEmpCheckinMatrix(emp)),
-            'total_breakdown': json.dumps(getBreakDown(emp, "all")),
+            'top_five_companies': topFive, 
+            'checkin_matrix': getEmpCheckinMatrix(emp),
+            'total_breakdown': getBreakDown(emp, "all"),
+            'vol_v_perc': vol_v_perc,
+            'month': month,
+            'svs': svs,
+            'sos': sos,
     }
     return reply_data
 
@@ -147,10 +155,8 @@ def leaderboard_context():
 
 def leaderboard(request):
     if request.method == "POST":
-        reply_data = leaderboard_reply_data(request.POST['selVVP'], request.POST['selMonth'], request.POST['selSVS'], request.POST['selSOS'], request.POST['focusEmployer'])
-        response = HttpResponse("")
-        for key in reply_data:
-            response.__setitem__(key, reply_data[key])
+        reply_data = leaderboard_reply_data(request.POST['selVVP'], request.POST['selMonth'], request.POST['selSVS'], request.POST['selSOS'],)
+        response = HttpResponse(json.dumps(reply_data), content_type='application/json')
         return response
     else:
         context = leaderboard_context()
