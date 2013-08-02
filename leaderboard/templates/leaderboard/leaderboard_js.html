@@ -4,104 +4,121 @@
 {% block javascript %}
 <script type="text/javascript" href="/static/libs/bootstrap/js/bootstrap.min.js"></script>
 <script type="text/javascript">
-    $("document").ready(function() {
-        $("#id_vol_v_perc").change(getResults);
-        $("#id_month").change(getResults);
-        $("#id_svs").change(switchSOS);
-        $("#id_sos").change(getResults);
-        getResults();
-    });
-    function getResults() {
-        var hostname = top.location.host.toString();
-        $.post("http://"+hostname+"/leaderboard/",
-            {
-                "selVVP":$("#id_vol_v_perc").val(),
-                "selMonth":$("#id_month").val(),
-                "selSVS":$("#id_svs").val(),
-                "selSOS":$("#id_sos").val()
-            },
-            makeChange, 'json');
+$("document").ready(function() {
+    $("#id_vol_v_perc").change(getResults);
+    $("#id_month").change(getResults);
+    $("#id_svs").change(switchSOS);
+    $("#id_sos").change(getResults);
+    getResults();
+});
+function getResults() {
+    var hostname = top.location.host.toString();
+    $.post("http://"+hostname+"/leaderboard/",
+        {
+            "selVVP":$("#id_vol_v_perc").val(),
+            "selMonth":$("#id_month").val(),
+            "selSVS":$("#id_svs").val(),
+            "selSOS":$("#id_sos").val(),
+            "just_emp": "false",
+        },
+        makeChange, 'json');
+}
+function getNewEmp(emp) {
+    var hostname = top.location.host.toString();
+    $("#comanyName").text(emp);
+    $.post("http://"+hostname+"/leaderboard/",
+        {
+        "just_emp": "true",
+        "focusEmployer": emp,
+        },
+        newEmp, 'json');
+}
+function makeChange(data, status) {
+    if ($("#id_svs").val() == 'size') {
+        svsFS = "for the {0} companies ";
+        $("#sos-preamble").text("for the ");
+        $("#sos-label").text($("#id_sos option:selected").text());
+        $("#sos-ps").text(" companies ");
     }
-    function makeChange(data, status) {
-        if ($("#id_svs").val() == 'size') {
-            svsFS = "for the {0} companies ";
-            $("#sos-preamble").text("for the ");
-            $("#sos-label").text($("#id_sos option:selected").text());
-            $("#sos-ps").text(" companies ");
-        }
-        else if ($("#id_svs").val() == 'sector') {
-            $("#sos-preamble").text("for the companies from sector ");
-            $("#sos-label").text($("#id_sos option:selected").text());
-            $("#sos-ps").text(" ");
-        } 
-        else {
-            $("#sos-preamble").text("");
-            $("#sos-label").text("");
-            $("#sos-ps").text("");
-        }
-        $("#month-label").text($("#id_month option:selected").text());
-        $("#vvp-label").text($("#id_vol_v_perc option:selected").text());
-        var selString = "#top_five_nav>li:eq({0})>a>h4";
-        var formatString = "{0} is {1} with {2}{3}";
-        var vvpMsg;
-        if (data.vol_v_perc === 'perc') {
-            vvpMsg = '% participation';
-        }
-        else {
-            vvpMsg = ' checkins';
-        }
-        var places = ["The Winner", "Second Place", "Third Place", "Fourth Place", "Fifth Place"];
-        for(var i=0; i<5; i++) {
-            textString = formatString.format(places[i], data.top_five_companies[i][0], data.top_five_companies[i][2], vvpMsg);
-            $(selString.format(i.toString())).text(textString);
-        }
-        var chart = new CanvasJS.Chart("breakDownGraph", data.chart_data);
-        chart.render();
-        $("#companyName").text(data.top_five_companies[0][0]);
-        $("#total_checkins").text(data.total_breakdown.total);
-        $("#total_gs").text(data.total_breakdown.gs);
-        $("#total_gc").text(data.total_breakdown.gc);
-        $("#total_us").text(data.total_breakdown.us);
-        $("#total_cc").text(data.total_breakdown.cc);
-        var commuterModes = ['c', 'cp', 'w', 'b', 't', 'tc', 'o'];
-        tableString = "#breakDownTable>table>tbody>tr:eq({0})>td:eq({1})";
-        for (var i=0; i<7; i++) { // td differentiation is normal day differentiation
-            for (var j=0; j<7; j++) {
-                $(tableString.format((i+1).toString(), (j+1).toString())).text(data.checkin_matrix[i][j]);
-            }
+    else if ($("#id_svs").val() == 'sector') {
+        $("#sos-preamble").text("for the companies from sector ");
+        $("#sos-label").text($("#id_sos option:selected").text());
+        $("#sos-ps").text(" ");
+    } 
+    else {
+        $("#sos-preamble").text("");
+        $("#sos-label").text("");
+        $("#sos-ps").text("");
+    }
+    $("#month-label").text($("#id_month option:selected").text());
+    $("#vvp-label").text($("#id_vol_v_perc option:selected").text());
+    if (data.vol_v_perc === 'perc') {
+        $(".vvpMsg").text('% participation');
+    }
+    else {
+        vvpMsg = ' checkins';
+    }
+    for(var i=0; i<5; i++) {
+        $("#emp"+i.toString()).text(data.top_five_companies[i][0]);
+        $("#emp"+i.toString()+"num").text(data.top_five_companies[i][2]);
+    }
+    newEmp(data, status);
+}    
+function newEmp(data, status) {
+    $("#companyName").text($("#top_five_nav>li.active>a>h4>span:eq(0)").text());
+    var chart = new CanvasJS.Chart("breakDownGraph", data.chart_data);
+    chart.render();
+    $("#total_checkins").text(data.total_breakdown.total);
+    $("#total_gs").text(data.total_breakdown.gs);
+    $("#total_gc").text(data.total_breakdown.gc);
+    $("#total_us").text(data.total_breakdown.us);
+    $("#total_cc").text(data.total_breakdown.cc);
+    var commuterModes = ['c', 'cp', 'w', 'b', 't', 'tc', 'o'];
+    tableString = "#breakDownTable>table>tbody>tr:eq({0})>td:eq({1})";
+    for (var i=0; i<7; i++) { // td differentiation is normal day differentiation
+        for (var j=0; j<7; j++) {
+            $(tableString.format((i+1).toString(), (j+1).toString())).text(data.checkin_matrix[i][j]);
         }
     }
-    function switchSOS() {
-        newSOS = $("#id_svs").val();
-        if (newSOS == "size") {
-            $("#sosdiv").removeClass("hidden");
-            $("#sos_label>strong").text("Select Size");
-            $("#id_sos").empty();
-            $("#id_sos").html('<option value="1">Small (1-10 Employees)</option><option value="2">Medium (11-100 Employees)</option><option value="3">Large (101-1000 Employees)</option><option value="4">Largest (>1000 Employees)</option>');
-        }
-        else if (newSOS == "sector") {
-            $("#sosdiv").removeClass("hidden");
-            $("#sos_label>strong").text("Select Sector");
-            $("#id_sos").empty(); 
-            $("#id_sos").html("{% for sector in sectors %}<option value={{ sector.id }}>{{ sector.name }}</option>{% endfor %}"); 
-        }
-        else {
-            $("#sosdiv").addClass("hidden");
-        }
-        getResults();
+}
+function switchSOS() {
+    newSOS = $("#id_svs").val();
+    if (newSOS == "size") {
+        $("#sosdiv").removeClass("hidden");
+        $("#sos_label>strong").text("Select Size");
+        $("#id_sos").empty();
+        $("#id_sos").html('<option value="1">Small (1-10 Employees)</option><option value="2">Medium (11-100 Employees)</option><option value="3">Large (101-1000 Employees)</option><option value="4">Largest (>1000 Employees)</option>');
     }
-    String.prototype.format = function() {
-        var formatted = this;
-        for(arg in arguments) {
-            formatted = formatted.replace("{" + arg + "}", arguments[arg]);
-        }
-        return formatted;
-    };
+    else if (newSOS == "sector") {
+        $("#sosdiv").removeClass("hidden");
+        $("#sos_label>strong").text("Select Sector");
+        $("#id_sos").empty(); 
+        $("#id_sos").html("{% for sector in sectors %}<option value={{ sector.id }}>{{ sector.name }}</option>{% endfor %}"); 
+    }
+    else {
+        $("#sosdiv").addClass("hidden");
+    }
+    getResults();
+}
+function empClick(index) {
+    if ($("#top_five_nav>li.active").index() != index) {
+        getNewEmp($("#emp"+index).text());
+        $("#top_five_nav>li.active").removeClass("active");
+        $("#top_five_nav>li:eq("+index+")").addClass("active");
+    }
+}
+String.prototype.format = function() {
+    var formatted = this;
+    for(arg in arguments) {
+        formatted = formatted.replace("{" + arg + "}", arguments[arg]);
+    }
+    return formatted;
+};
 </script>
 <script type="text/javascript" src="/static/libs/canvasjs.min.js"></script>
 {% endblock %}
 {% block pageheader %}
-    <h1>Find out what companies are going green!</h1>
+<!--<h3>LEADERBOARD</h3>-->
 {% endblock %}
 {% block body %}
 <div class="row">
@@ -122,7 +139,7 @@
                             <select id="id_month" name="month">
                                 <option value="all">All Months</option>
                                 {% for month in months %}
-                                <option value="{{ month.url_month }}">{{ month.month }}</option>
+                                <option value="{{ month.month }}">{{ month.month }}</option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -152,13 +169,12 @@
             <div class="span6">
                 <br />
                 <span style="font-size:large">The results from <strong id="month-label">All Months</strong> <span id="sos-preamble"></span><strong id="sos-label"></strong><span id="sos-ps"></span>organized <strong id="vvp-label">By Percent</strong>:</span>
-                <hr />
                 <ul class="nav nav-pills nav-stacked" id="top_five_nav">
-                    <li class="active"><a href="#"><h4>The Winner is Dana Farber, with 40% participation!</h4></a></li>
-                    <li><a href="#"><h4>Second Place is Millenium Pharmeceuticals, with 36% participation!</h4></a></li>
-                    <li><a href="#"><h4>Blah!</h4></a></li>
-                    <li><a href="#"><h4>More Blah!</h4></a></li>
-                    <li><a href="#"><h4>Even More Blah!!!</h4></a></li>
+                    <li class="active"><a href="#" onclick="empClick(0)"><h4>The Winner is <span id="emp0"></span> with <span id="emp0num"></span><span class="vvpMsg"></span></h4></a></li>
+                    <li><a href="#" onclick="empClick(1)"><h4>Second Place is <span id="emp1"></span> with <span id="emp1num"></span><span class="vvpMsg"></span></h4></a></li>
+                    <li><a href="#" onclick="empClick(2)"><h4>Third Place is <span id="emp2"></span> with <span id="emp2num"></span><span class="vvpMsg"></span></h4></a></li>
+                    <li><a href="#" onclick="empClick(3)"><h4>Fourth Place is <span id="emp3"></span> with <span id="emp3num"></span><span class="vvpMsg"></span></h4></a></li>
+                    <li><a href="#" onclick="empClick(4)"><h4>Fifth Place is <span id="emp4"></span> with <span id="emp4num"></span><span class="vvpMsg"></span></h4></a></li>
                 </ul>
             </div>
         </div>

@@ -80,7 +80,9 @@ def getAllMonths():
 def getCanvasJSChart(emp):
     chartData = getCanvasJSChartData(emp)
     barChart = {
-        'title': { 'text': "Walk Ride Day Participation Breakdown and New Checkins Over Time" },
+        'title': { 
+            'text': "Walk Ride Day Participation Breakdown and New Checkins Over Time",
+            'fontSize': 20 },
         'colorSet': 'commuterModes',
         'data': chartData
     }
@@ -90,45 +92,53 @@ def getCanvasJSChartData(emp):
     chartData = [
         {
             'type': "stackedColumn",
+            'color': '#0096FF',
             'legendText': "Green Switches",
             'showInLegend': "true",
+            'toolTipContent': '{name}: {y}',
             'dataPoints': [
             ]
         },
         {
             'type': "stackedColumn",
+            'color': '#65AB4B',
             'legendText': "Green Commutes",
             'showInLegend': "true",
+            'toolTipContent': '{name}: {y}',
             'dataPoints': [
             ]
         },
         {
             'type': "stackedColumn",
+            'color': '#FF2600',
             'legendText': "Car Commutes",
             'showInLegend': "true",
+            'toolTipContent': '{name}: {y}',
             'dataPoints': [
             ]
         },
         {
             'type': "stackedColumn",
-            'legendText': "Unhealthy Switches",
+            'color': '#9437FF',
+            'legendText': "Other",
             'showInLegend': "true",
+            'toolTipContent': '{name}: {y}',
             'dataPoints': [
             ]
         }
     ]
-    intToModeConversion = { 0:'gs', 1:'gc', 2:'cc', 3:'us' }
+    intToModeConversion = ['gs', 'gc', 'cc', 'us']
+    iTMSConv = ['Green Switches','Green Commuters', 'Car Commuters', 'Other']
     for month in getMonths(emp):
         breakDown = getBreakDown(emp, month)
         for i in range(0, 4):
-            chartData[i]['dataPoints'] += [{ 'label': month, 'y': breakDown[intToModeConversion[i]]},]
+            chartData[i]['dataPoints'] += [{ 'label': month, 'y': breakDown[intToModeConversion[i]], 'name': iTMSConv[i] },]
     return chartData
 
 def leaderboard_reply_data(vol_v_perc, month, svs, sos, focusEmployer=None):
-    topFive = getTopFiveCompanies(vol_v_perc, month, svs, sos)
+    topFive = getTopFiveCompanies(vol_v_perc, month, svs, sos) 
     if focusEmployer is None and len(topFive) > 0:
         focusEmployer = topFive[0]
-        print focusEmployer[0]
         emp = Employer.objects.get(name=focusEmployer[0])
     elif type(focusEmployer) is str:
         emp = Employer.objects.get(name=focusEmployer)
@@ -146,6 +156,15 @@ def leaderboard_reply_data(vol_v_perc, month, svs, sos, focusEmployer=None):
     }
     return reply_data
 
+def leaderboard_company_detail(empName):
+    emp = Employer.objects.get(name=empName)
+    reply_data = {
+            'chart_data': getCanvasJSChart(emp),
+            'checkin_matrix': getEmpCheckinMatrix(emp),
+            'total_breakdown': getBreakDown(emp, "all"),
+    }
+    return reply_data
+
 def leaderboard_context():
     context = {
             'sectors': sorted(EmplSector.objects.all()), 
@@ -155,7 +174,10 @@ def leaderboard_context():
 
 def leaderboard(request):
     if request.method == "POST":
-        reply_data = leaderboard_reply_data(request.POST['selVVP'], request.POST['selMonth'], request.POST['selSVS'], request.POST['selSOS'],)
+        if request.POST['just_emp'] == 'false':
+            reply_data = leaderboard_reply_data(request.POST['selVVP'], request.POST['selMonth'], request.POST['selSVS'], request.POST['selSOS'],)
+        else:
+            reply_data = leaderboard_company_detail(request.POST['focusEmployer'])
         response = HttpResponse(json.dumps(reply_data), content_type='application/json')
         return response
     else:
