@@ -1,6 +1,6 @@
 # Create your views here.
 from survey.models import Commutersurvey, Employer, EmplSector
-from leaderboard.models import Month
+from leaderboard.models import Month, getMonths
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from operator import itemgetter
@@ -24,6 +24,8 @@ def getTopFiveCompanies(vvp, month, svs, sos):
         for company in emps:
             try:
                 percent = (100 * float(company.get_nr_surveys(month))/float(company.nr_employees))
+                if month == 'all':
+                    percent /= len(getMonths())
                 companyList += [(company.name, percent, ('%.1f' % percent)),]
             except TypeError:
                 pass
@@ -38,7 +40,7 @@ def getEmpCheckinMatrix(emp):
     commuterModes = ['c', 'cp', 'w', 'b', 't', 'tc', 'o']
     checkinMatrix = []
     todayPos = -1
-    empCommutes = Commutersurvey.objects.filter(employer__contains=emp.name)
+    empCommutes = Commutersurvey.objects.filter(month__in=getMonths(), employer__contains=emp.name)
     for todayWM in commuterModes:
         todayPos += 1
         checkinMatrix += [[],]
@@ -49,7 +51,7 @@ def getEmpCheckinMatrix(emp):
 
 def getBreakDown(emp, month):
     if month == "all":
-        empSurveys = Commutersurvey.objects.filter(employer=emp)
+        empSurveys = Commutersurvey.objects.filter(employer=emp, month__in=getMonths())
     else:
         empSurveys = Commutersurvey.objects.filter(employer=emp, month=month)
     unhealthySwitches = 0
@@ -67,15 +69,6 @@ def getBreakDown(emp, month):
         elif survey.from_work_switch == 4: greenSwitches += 1
         #if 
     return { 'us': unhealthySwitches, 'cc': carCommuters, 'gc': greenCommuters, 'gs': greenSwitches, 'total':(len(empSurveys)*2) }
-
-def getMonths(emp):
-    return ['April 2013', 'May 2013', 'June 2013', 'July 2013']
-
-def getAllMonths():
-    return [{'month': 'April 2013', 'url_month': 'april-2013'},
-            {'month': 'May 2013', 'url_month': 'may-2013'},
-            {'month': 'June 2013', 'url_month': 'june-2013'},
-            {'month': 'July 2013', 'url_month': 'june-2013'}]
 
 def getCanvasJSChart(emp):
     chartData = getCanvasJSChartData(emp)
@@ -129,7 +122,7 @@ def getCanvasJSChartData(emp):
     ]
     intToModeConversion = ['gs', 'gc', 'cc', 'us']
     iTMSConv = ['Green Switches','Green Commuters', 'Car Commuters', 'Other']
-    for month in getMonths(emp):
+    for month in getMonths():
         breakDown = getBreakDown(emp, month)
         for i in range(0, 4):
             chartData[i]['dataPoints'] += [{ 'label': month, 'y': breakDown[intToModeConversion[i]], 'name': iTMSConv[i] },]
@@ -168,7 +161,7 @@ def leaderboard_company_detail(empName):
 def leaderboard_context():
     context = {
             'sectors': sorted(EmplSector.objects.all()), 
-            'months': getAllMonths(),
+            'months': Month.objects.filter(active=True),
     }
     return context
 

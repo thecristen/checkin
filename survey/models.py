@@ -1,6 +1,7 @@
 from django.contrib.gis.db import models
 from django.db.models import permalink
 from django.utils.text import slugify
+from leaderboard.models import getMonths
 
 # lazy translation
 from django.utils.translation import ugettext_lazy as _
@@ -80,13 +81,13 @@ class Employer(models.Model):
         return self.name
     @property
     def nr_surveys(self):
-            return Commutersurvey.objects.filter(employer__exact=self.name).count()
+        return Commutersurvey.objects.filter(employer__exact=self.name).count()
 
     def get_nr_surveys(self, month):
         if month != 'all':
             return Commutersurvey.objects.filter(employer__exact=self.name, month=month).count()
         else:
-            return Commutersurvey.objects.filter(employer__exact=self.name).count()
+            return Commutersurvey.objects.filter(month__in=getMonths(), employer__exact=self.name).count()
 
  
 class Commutersurvey(models.Model):
