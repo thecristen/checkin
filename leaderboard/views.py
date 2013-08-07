@@ -11,14 +11,14 @@ def index(request):
     context = {'latest_check_ins' : latest_check_ins}
     return render(request, 'leaderboard/index.html', context)
 
-def getTopFiveCompanies(vvp, month, svs, sos):
+def getTopCompanies(vvp, month, svs, sos):
     emps = []
     if svs == 'all':
-        emps = Employer.objects.all()
+        emps = Employer.objects.filter(active=True)
     elif svs == 'size':
-        emps = Employer.objects.filter(size_cat=sos)
+        emps = Employer.objects.filter(size_cat=sos, active=True)
     elif svs == 'sector':
-        emps = Employer.objects.filter(sector=sos)
+        emps = Employer.objects.filter(sector=sos, active=True)
     companyList = []
     if vvp == 'perc':
         for company in emps:
@@ -33,8 +33,8 @@ def getTopFiveCompanies(vvp, month, svs, sos):
         for company in emps:
             nr_surveys = company.get_nr_surveys(month)
             companyList += [(company.name, nr_surveys, str(nr_surveys)),]
-    topFive = sorted(companyList, key=itemgetter(1), reverse=True)[:5]
-    return topFive
+    topEmps = sorted(companyList, key=itemgetter(1), reverse=True)
+    return topEmps
 
 def getEmpCheckinMatrix(emp): 
     commuterModes = ['c', 'cp', 'w', 'b', 't', 'tc', 'o']
@@ -121,7 +121,7 @@ def getCanvasJSChartData(emp):
         }
     ]
     intToModeConversion = ['gs', 'gc', 'cc', 'us']
-    iTMSConv = ['Green Switches','Green Commuters', 'Car Commuters', 'Other']
+    iTMSConv = ['Green Switches','Green Commutes', 'Car Commutes', 'Other']
     for month in getMonths():
         breakDown = getBreakDown(emp, month)
         for i in range(0, 4):
@@ -129,9 +129,9 @@ def getCanvasJSChartData(emp):
     return chartData
 
 def leaderboard_reply_data(vol_v_perc, month, svs, sos, focusEmployer=None):
-    topFive = getTopFiveCompanies(vol_v_perc, month, svs, sos) 
-    if focusEmployer is None and len(topFive) > 0:
-        focusEmployer = topFive[0]
+    topEmps = getTopCompanies(vol_v_perc, month, svs, sos) 
+    if focusEmployer is None and len(topEmps) > 0:
+        focusEmployer = topEmps[0]
         emp = Employer.objects.get(name=focusEmployer[0])
     elif type(focusEmployer) is str:
         emp = Employer.objects.get(name=focusEmployer)
@@ -139,7 +139,7 @@ def leaderboard_reply_data(vol_v_perc, month, svs, sos, focusEmployer=None):
         emp = focusEmployer
     reply_data = { 
             'chart_data': getCanvasJSChart(emp), 
-            'top_five_companies': topFive, 
+            'top_companies': topEmps, 
             'checkin_matrix': getEmpCheckinMatrix(emp),
             'total_breakdown': getBreakDown(emp, "all"),
             'vol_v_perc': vol_v_perc,
