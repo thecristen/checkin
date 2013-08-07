@@ -5,6 +5,7 @@ from django.template.defaultfilters import slugify
 class Month(models.Model):
     month=models.CharField(max_length=100)
     active=models.BooleanField()
+    url_month=models.CharField(max_length=100)
     def __unicode__(self):
         return self.month
 
