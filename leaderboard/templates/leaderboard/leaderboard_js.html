@@ -9,6 +9,9 @@ $("document").ready(function() {
     $("#id_month").change(getResults);
     $("#id_svs").change(switchSOS);
     $("#id_sos").change(getResults);
+    $("#id_companies").change(function() {
+        getNewEmp($("#id_companies").val());
+        });
     getResults();
 });
 function getResults() {
@@ -52,22 +55,28 @@ function makeChange(data, status) {
     }
     $("#month-label").text($("#id_month option:selected").text());
     $("#vvp-label").text($("#id_vol_v_perc option:selected").text());
+    $('#id_companies').empty();
     if (data.vol_v_perc === 'perc') {
-        $(".vvpMsg").text('% participation');
+        vvpMsg = '% participation';
     }
     else {
-        $(".vvpMsg").text(' check-ins');
+        vvpMsg = ' check-ins';
     }
-    for(var i=0; i<5; i++) {
-        $("#emp"+i.toString()).text(data.top_five_companies[i][0]);
-        $("#emp"+i.toString()+"num").text(data.top_five_companies[i][2]);
+    empOptFS = '{0} place is {1} with {2}{3}';
+    for(var i=0; i<data.top_companies.length; i++) {
+        $('#id_companies').append('<option value="{0}">{1}</option>'.format(data.top_companies[i][0], empOptFS.format(Number.getOrdinalFor(i+1, true), data.top_companies[i][0], data.top_companies[i][2], vvpMsg)));
     }
     newEmp(data, status);
-    $("#top_five_nav>li.active").removeClass("active");
-    $("#top_five_nav>li:eq(0)").addClass("active");
-}    
+}
+
+(function(o) {
+ Number.getOrdinalFor = function(intNum, includeNumber) {
+ return (includeNumber ? intNum : "")
+ + (o[((intNum = Math.abs(intNum % 100)) - 20) % 10] || o[intNum] || "th");
+ };
+ })([,"st","nd","rd"]);
+
 function newEmp(data, status) {
-    $("#companyName").text($("#top_five_nav>li.active>a>h4>span:eq(0)").text());
     var chart = new CanvasJS.Chart("breakDownGraph", data.chart_data);
     chart.render();
     $("#total_checkins").text(data.total_breakdown.total);
@@ -102,13 +111,6 @@ function switchSOS() {
     }
     getResults();
 }
-function empClick(index) {
-    if ($("#top_five_nav>li.active").index() != index) {
-        getNewEmp($("#emp"+index).text());
-        $("#top_five_nav>li.active").removeClass("active");
-        $("#top_five_nav>li:eq("+index+")").addClass("active");
-    }
-}
 String.prototype.format = function() {
     var formatted = this;
     for(arg in arguments) {
@@ -124,186 +126,164 @@ String.prototype.format = function() {
 {% endblock %}
 {% block body %}
 <div class="row">
-    <div class="span6" id="ctrlAndTopFive">
-        <div class="row" id="control-panel">
-            <div class="span6">
-                <div class="row-fluid">
-                    <div class="control-group span6"> 
-                        <label class="control-label"><strong>Select by volume or percent:</strong></label><div class="controls">
-                            <select id="id_vol_v_perc" name="vol_v_perc" >
-                                <option value="perc">By Percent</option>
-                                <option value="vol">By Volume</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="control-group span6">
-                        <label class="control-label"><strong>Select Month:</strong></label> <div class="controls">
-                            <select id="id_month" name="month">
-                                <option value="all">All Months</option>
-                                {% for month in months %}
-                                <option value="{{ month.month }}">{{ month.month }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="row-fluid">
-                    <div class="control-group span6">
-                        <label class="control-label"><strong>Select By Size or By Sector:</strong></label> <div class="controls">
-                            <select id="id_svs" name='svs'>
-                                <option value="all">-- ALL --</option>
-                                <option value="size">By Size</option>
-                                <option value="sector">By Sector</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="control-group span6 hidden" id="sosdiv">
-                        <label class="control-label" id="sos_label"><strong></strong></label><div class="controls">
-                            <select id="id_sos" name="sos">
-                                <option value="all"></option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row" id="topFiveCompanies">
-            <div class="span6">
-                <br />
-                <span style="font-size:large">The results from <strong id="month-label">All Months</strong> <span id="sos-preamble"></span><strong id="sos-label"></strong><span id="sos-ps"></span>organized <strong id="vvp-label">By Percent</strong>:</span>
-                <ul class="nav nav-pills nav-stacked" id="top_five_nav">
-                    <li class="active"><a href="#" onclick="empClick(0)"><h4>The Winner is <span id="emp0"></span> with <span id="emp0num"></span><span class="vvpMsg"></span></h4></a></li>
-                    <li><a href="#" onclick="empClick(1)"><h4>Second Place is <span id="emp1"></span> with <span id="emp1num"></span><span class="vvpMsg"></span></h4></a></li>
-                    <li><a href="#" onclick="empClick(2)"><h4>Third Place is <span id="emp2"></span> with <span id="emp2num"></span><span class="vvpMsg"></span></h4></a></li>
-                    <li><a href="#" onclick="empClick(3)"><h4>Fourth Place is <span id="emp3"></span> with <span id="emp3num"></span><span class="vvpMsg"></span></h4></a></li>
-                    <li><a href="#" onclick="empClick(4)"><h4>Fifth Place is <span id="emp4"></span> with <span id="emp4num"></span><span class="vvpMsg"></span></h4></a></li>
-                </ul>
-            </div>
+    <div class="control-group span3" id="vvpdiv"> 
+        <label class="control-label"><strong>Select by volume or percent:</strong></label><div class="controls">
+            <select id="id_vol_v_perc" name="vol_v_perc" >
+                <option value="perc">By Percent</option>
+                <option value="vol">By Volume</option>
+            </select>
         </div>
     </div>
-    <div class="span6" id="companyFocus">
-        <div class="row">
-            <div class="span6" id="companyHeader">
-                <h3 id="companyName">No Company Selected</h3>
-            </div>
+    <div class="control-group span3" id="monthdiv">
+        <label class="control-label"><strong>Select Month:</strong></label> <div class="controls">
+            <select id="id_month" name="month">
+                <option value="all">All Months</option>
+                {% for month in months %}
+                <option value="{{ month.month }}">{{ month.month }}</option>
+                {% endfor %}
+            </select>
         </div>
-        <div class="row">
-            <div class="span6" id="breakDownGraph" style="height:300px">
-            </div>
+    </div>
+    <div class="control-group span3" id="svsdiv">
+        <label class="control-label"><strong>Select By Size or By Sector:</strong></label> <div class="controls">
+            <select id="id_svs" name='svs'>
+                <option value="all">-- ALL --</option>
+                <option value="size">By Size</option>
+                <option value="sector">By Sector</option>
+            </select>
         </div>
-        <div class="row">
-            <div class="span2" id="totalBreakDown">
-                <table class="table">
-                    <tr>
-                        <th id="totals"><h4>Totals: </h4></th>
-                    </tr>
-                    <tr>
-                        <td><div class="gc text-right">Commutes:</div></td>
-                        <td class="gc" id="total_checkins"></td>
-                    </tr>
-                    <tr>
-                        <td><div class="gs text-right">Green Switches:</div></td>
-                        <td class="gc" id="total_gs"></td>
-                    </tr>
-                    <tr>
-                        <td><div class="gc text-right">Green Commutes:</div></td>
-                        <td class="gc" id="total_gc"></td>
-                    </tr>
-                    <tr>
-                        <td><div class="cc text-right">Car Commutes:</div></td>
-                        <td class="cc" id="total_cc"></td>
-                    </tr>
-                    <tr>
-                        <td><div class="us text-right">Other:</div></td>
-                        <td class="us" id="total_us"></td>
-                    </tr>
-                </table>
-            </div>
-            <div class="span4" id="breakDownTable">
-                <table class="table table-bordered">
-                    <tr>
-                        <td></td>
-                        <td><img src="/static/img/c.png" height="32" width="32" class="img-circle" title="Driving a personal car on normal days"></img></td>
-                        <td><img src="/static/img/cp.png" height="32" width="32" class="img-circle" title="Carpooling on normal days"></img></td>
-                        <td><img src="/static/img/w.png" height="32" width="32" class="img-circle" title="Walking on normal days"></img></td>
-                        <td><img src="/static/img/b.png" height="32" width="32" class="img-circle" title="Biking on normal days"></img></td>
-                        <td><img src="/static/img/t.png" height="32" width="32" class="img-circle" title="Taking public transit on normal days"></img></td>
-                        <td><img src="/static/img/tc.png" height="32" width="32" class="img-circle" title="Telecommuting on normal days"></img></td>
-                        <td><img src="/static/img/o.png" height="32" width="32" class="img-circle" title="Other transportaition on normal days"></img></td>
-                    </tr>
-                    <tr class="error">
-                        <td><img src="/static/img/c.png" height="32" width="32" class="img-circle" title="Driving a personal car on Walk-Ride days"></img></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr class="success">
-                        <td><img src="/static/img/cp.png" height="32" width="32" class="img-circle" title="Carpooling on Walk-Ride days"></img></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr class="success">
-                        <td><img src="/static/img/w.png" height="32" width="32" class="img-circle" title="Walking on Walk-Ride days"></img></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr class="success">
-                        <td><img src="/static/img/b.png" height="32" width="32" class="img-circle" title="Biking on Walk-Ride days"></img></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr class="success">
-                        <td><img src="/static/img/t.png" height="32" width="32" class="img-circle" title="Taking public transit on Walk-Ride days"></img></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr class="success">
-                        <td><img src="/static/img/tc.png" height="32" width="32" class="img-circle" title="Telecommuting on Walk-Ride days"></img></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr class="success">
-                        <td><img src="/static/img/o.png" height="32" width="32" class="img-circle" title="Other transportation on Walk-Ride days"></img></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                </table>
-            </div>
+    </div>
+    <div class="control-group span3 hidden" id="sosdiv">
+        <label class="control-label" id="sos_label"><strong></strong></label><div class="controls">
+            <select id="id_sos" name="sos">
+                <option value="all"></option>
+            </select>
         </div>
+    </div>
+</div>
+<div class="row">
+    <div class="control-group span12">
+        <!--<label class="control-label" id="company_label">
+            <span style="font-size:large">The results from <strong id="month-label">All Months</strong> <span id="sos-preamble"></span><strong id="sos-label"></strong><span id="sos-ps"></span>organized <strong id="vvp-label">By Percent</strong>:</span>
+        </label>
+        -->
+        <select id="id_companies" class="span9">
+        </select>
+    </div>
+</div>
+<div class="row">
+    <div class="span6" id="breakDownGraph" style="height:300px">
+    </div>
+    <div class="span2" id="totalBreakDown">
+        <table class="table">
+            <tr>
+                <th id="totals"><h4>Totals: </h4></th>
+            </tr>
+            <tr>
+                <td><div class="gc text-right">Commutes:</div></td>
+                <td class="gc" id="total_checkins"></td>
+            </tr>
+            <tr>
+                <td><div class="gs text-right">Green Switches:</div></td>
+                <td class="gc" id="total_gs"></td>
+            </tr>
+            <tr>
+                <td><div class="gc text-right">Green Commutes:</div></td>
+                <td class="gc" id="total_gc"></td>
+            </tr>
+            <tr>
+                <td><div class="cc text-right">Car Commutes:</div></td>
+                <td class="cc" id="total_cc"></td>
+            </tr>
+            <tr>
+                <td><div class="us text-right">Other:</div></td>
+                <td class="us" id="total_us"></td>
+            </tr>
+        </table>
+    </div>
+    <div class="span4" id="breakDownTable">
+        <table class="table table-bordered">
+            <tr>
+                <td></td>
+                <td><img src="/static/img/c.png" height="32" width="32" class="img-circle" title="Driving a personal car on normal days"></img></td>
+                <td><img src="/static/img/cp.png" height="32" width="32" class="img-circle" title="Carpooling on normal days"></img></td>
+                <td><img src="/static/img/w.png" height="32" width="32" class="img-circle" title="Walking on normal days"></img></td>
+                <td><img src="/static/img/b.png" height="32" width="32" class="img-circle" title="Biking on normal days"></img></td>
+                <td><img src="/static/img/t.png" height="32" width="32" class="img-circle" title="Taking public transit on normal days"></img></td>
+                <td><img src="/static/img/tc.png" height="32" width="32" class="img-circle" title="Telecommuting on normal days"></img></td>
+                <td><img src="/static/img/o.png" height="32" width="32" class="img-circle" title="Other transportaition on normal days"></img></td>
+            </tr>
+            <tr class="error">
+                <td><img src="/static/img/c.png" height="32" width="32" class="img-circle" title="Driving a personal car on Walk-Ride days"></img></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="success">
+                <td><img src="/static/img/cp.png" height="32" width="32" class="img-circle" title="Carpooling on Walk-Ride days"></img></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="success">
+                <td><img src="/static/img/w.png" height="32" width="32" class="img-circle" title="Walking on Walk-Ride days"></img></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="success">
+                <td><img src="/static/img/b.png" height="32" width="32" class="img-circle" title="Biking on Walk-Ride days"></img></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="success">
+                <td><img src="/static/img/t.png" height="32" width="32" class="img-circle" title="Taking public transit on Walk-Ride days"></img></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="success">
+                <td><img src="/static/img/tc.png" height="32" width="32" class="img-circle" title="Telecommuting on Walk-Ride days"></img></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="success">
+                <td><img src="/static/img/o.png" height="32" width="32" class="img-circle" title="Other transportation on Walk-Ride days"></img></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </table>
     </div>
 </div>
     
