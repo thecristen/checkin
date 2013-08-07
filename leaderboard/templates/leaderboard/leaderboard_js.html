@@ -37,22 +37,6 @@ function getNewEmp(emp) {
         newEmp, 'json');
 }
 function makeChange(data, status) {
-    if ($("#id_svs").val() == 'size') {
-        svsFS = "for the {0} companies ";
-        $("#sos-preamble").text("for the ");
-        $("#sos-label").text($("#id_sos option:selected").text());
-        $("#sos-ps").text(" companies ");
-    }
-    else if ($("#id_svs").val() == 'sector') {
-        $("#sos-preamble").text("for the companies from sector ");
-        $("#sos-label").text($("#id_sos option:selected").text());
-        $("#sos-ps").text(" ");
-    } 
-    else {
-        $("#sos-preamble").text("");
-        $("#sos-label").text("");
-        $("#sos-ps").text("");
-    }
     $("#month-label").text($("#id_month option:selected").text());
     $("#vvp-label").text($("#id_vol_v_perc option:selected").text());
     $('#id_companies').empty();
@@ -62,7 +46,12 @@ function makeChange(data, status) {
     else {
         vvpMsg = ' check-ins';
     }
-    empOptFS = '{0} place is {1} with {2}{3}';
+    if ($("#id_svs").val() !== "name") {
+        empOptFS = '{0} place is {1} with {2}{3}';
+    }
+    else {
+        empOptFS = '{1}';
+    }
     for(var i=0; i<data.top_companies.length; i++) {
         $('#id_companies').append('<option value="{0}">{1}</option>'.format(data.top_companies[i][0], empOptFS.format(Number.getOrdinalFor(i+1, true), data.top_companies[i][0], data.top_companies[i][2], vvpMsg)));
     }
@@ -96,18 +85,24 @@ function switchSOS() {
     newSOS = $("#id_svs").val();
     if (newSOS == "size") {
         $("#sosdiv").removeClass("hidden");
+        $("#vvpdiv").removeClass("hidden");
+        $("#monthdiv").removeClass("hidden");
         $("#sos_label>strong").text("Select Size");
         $("#id_sos").empty();
         $("#id_sos").html('<option value="1">Small (1-10 Employees)</option><option value="2">Medium (11-100 Employees)</option><option value="3">Large (101-1000 Employees)</option><option value="4">Largest (>1000 Employees)</option>');
     }
     else if (newSOS == "sector") {
         $("#sosdiv").removeClass("hidden");
+        $("#vvpdiv").removeClass("hidden");
+        $("#monthdiv").removeClass("hidden");
         $("#sos_label>strong").text("Select Sector");
         $("#id_sos").empty(); 
         $("#id_sos").html("{% for sector in sectors %}<option value={{ sector.id }}>{{ sector.name }}</option>{% endfor %}"); 
     }
     else {
         $("#sosdiv").addClass("hidden");
+        $("#vvpdiv").addClass("hidden");
+        $("#monthdiv").addClass("hidden");
     }
     getResults();
 }
@@ -126,14 +121,6 @@ String.prototype.format = function() {
 {% endblock %}
 {% block body %}
 <div class="row">
-    <div class="control-group span3" id="vvpdiv"> 
-        <label class="control-label"><strong>Select by volume or percent:</strong></label><div class="controls">
-            <select id="id_vol_v_perc" name="vol_v_perc" >
-                <option value="perc">By Percent</option>
-                <option value="vol">By Volume</option>
-            </select>
-        </div>
-    </div>
     <div class="control-group span3" id="monthdiv">
         <label class="control-label"><strong>Select Month:</strong></label> <div class="controls">
             <select id="id_month" name="month">
@@ -144,19 +131,27 @@ String.prototype.format = function() {
             </select>
         </div>
     </div>
-    <div class="control-group span3" id="svsdiv">
-        <label class="control-label"><strong>Select By Size or By Sector:</strong></label> <div class="controls">
-            <select id="id_svs" name='svs'>
-                <option value="all">-- ALL --</option>
-                <option value="size">By Size</option>
-                <option value="sector">By Sector</option>
+    <div class="control-group span3" id="vvpdiv"> 
+        <label class="control-label"><strong>Select by volume or percent:</strong></label><div class="controls">
+            <select id="id_vol_v_perc" name="vol_v_perc" >
+                <option value="perc">By Percent</option>
+                <option value="vol">By Volume</option>
             </select>
         </div>
     </div>
-    <div class="control-group span3 hidden" id="sosdiv">
-        <label class="control-label" id="sos_label"><strong></strong></label><div class="controls">
+    <div class="control-group span3" id="svsdiv">
+        <label class="control-label"><strong>Select By Size, Sector, or Name:</strong></label> <div class="controls">
+            <select id="id_svs" name='svs'>
+                <option value="sector">By Sector</option>
+                <option value="size">By Size</option>
+                <option value="name">By Name</option>
+            </select>
+        </div>
+    </div>
+    <div class="control-group span3" id="sosdiv">
+        <label class="control-label" id="sos_label"><strong>Select Sector:</strong></label><div class="controls">
             <select id="id_sos" name="sos">
-                <option value="all"></option>
+                {% for sector in sectors %}<option value={{ sector.id }}>{{ sector.name }}</option>{% endfor %}
             </select>
         </div>
     </div>

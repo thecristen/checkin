@@ -3,7 +3,7 @@ from survey.models import Commutersurvey, Employer, EmplSector
 from leaderboard.models import Month, getMonths
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
-from operator import itemgetter
+from operator import itemgetter, attrgetter
 import json
 
 def index(request):
@@ -27,6 +27,8 @@ def getTopCompanies(vvp, month, svs, sos):
         emps = Employer.objects.filter(size_cat=sos, active=True)
     elif svs == 'sector':
         emps = Employer.objects.filter(sector=sos, active=True)
+    elif svs == 'name':
+        emps = sorted(Employer.objects.filter(active=True), key=attrgetter('name'))
     companyList = []
     if vvp == 'perc':
         for company in emps:
@@ -41,7 +43,10 @@ def getTopCompanies(vvp, month, svs, sos):
         for company in emps:
             nr_surveys = company.get_nr_surveys(month)
             companyList += [(company.name, nr_surveys, str(nr_surveys)),]
-    topEmps = sorted(companyList, key=itemgetter(1), reverse=True)
+    if svs != 'name':
+        topEmps = sorted(companyList, key=itemgetter(1), reverse=True)
+    else:
+        topEmps = companyList
     return topEmps
 
 def getEmpCheckinMatrix(emp): 
