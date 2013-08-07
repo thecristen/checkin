@@ -11,6 +11,14 @@ def index(request):
     context = {'latest_check_ins' : latest_check_ins}
     return render(request, 'leaderboard/index.html', context)
 
+def getSectorNum(sector):
+    if sector.name[1] == ' ':
+        return int(sector.name[0])
+    elif sector.name[2] == ' ':
+        return int(sector.name[:2])
+    else:
+        return int(sector.name[:3])
+
 def getTopCompanies(vvp, month, svs, sos):
     emps = []
     if svs == 'all':
@@ -160,7 +168,7 @@ def leaderboard_company_detail(empName):
 
 def leaderboard_context():
     context = {
-            'sectors': sorted(EmplSector.objects.all()), 
+            'sectors': sorted(EmplSector.objects.all(), key=getSectorNum), 
             'months': Month.objects.filter(active=True),
     }
     return context
