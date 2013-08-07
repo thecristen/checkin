@@ -2,7 +2,9 @@
 {% load i18n %}
 {% block title %}Leaderboard{% endblock %}
 {% block javascript %}
-<script type="text/javascript" href="/static/libs/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src"/static/libs/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/static/libs/spin.min.js"></script>
+<script type="text/javascript" src="/static/libs/jquery.spin.js"></script>
 <script type="text/javascript">
 $("document").ready(function() {
     $("#id_vol_v_perc").change(getResults);
@@ -15,6 +17,8 @@ $("document").ready(function() {
     getResults();
 });
 function getResults() {
+    $("#spinner").spin("small");
+    $("#spinnerLabel").removeClass("hidden");
     var hostname = top.location.host.toString();
     $.post("http://"+hostname+"/leaderboard/",
         {
@@ -27,6 +31,8 @@ function getResults() {
         makeChange, 'json');
 }
 function getNewEmp(emp) {
+    $("#spinner").spin("small");
+    $("#spinnerLabel").removeClass("hidden");
     var hostname = top.location.host.toString();
     $("#comanyName").text(emp);
     $.post("http://"+hostname+"/leaderboard/",
@@ -80,6 +86,8 @@ function newEmp(data, status) {
             $(tableString.format((i+1).toString(), (j+1).toString())).text(data.checkin_matrix[i][j]);
         }
     }
+    $("#spinner").spin(false);
+    $("#spinnerLabel").addClass("hidden");
 }
 function switchSOS() {
     newSOS = $("#id_svs").val();
@@ -157,13 +165,14 @@ String.prototype.format = function() {
     </div>
 </div>
 <div class="row">
-    <div class="control-group span12">
-        <!--<label class="control-label" id="company_label">
-            <span style="font-size:large">The results from <strong id="month-label">All Months</strong> <span id="sos-preamble"></span><strong id="sos-label"></strong><span id="sos-ps"></span>organized <strong id="vvp-label">By Percent</strong>:</span>
-        </label>
-        -->
+    <div class="control-group span9">
         <select id="id_companies" class="span9">
         </select>
+    </div>
+    <div class="span1" id="spinnerLabel">
+        <h4>Loading...</h4>
+    </div>
+    <div class="span1" id="spinner" style="height:40px">
     </div>
 </div>
 <div class="row">

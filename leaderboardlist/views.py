@@ -2,7 +2,7 @@
 from survey.models import Employer, Commutersurvey
 from leaderboard.views import getBreakDown, getMonths
 from django.shortcuts import render
-from leaderboard.models import Month
+from leaderboard.models import getMonths, Month
 import json
 
 def getCJSEmplList(month):
@@ -79,6 +79,6 @@ def empBreakDown(request, month):
     return render(request, 'leaderboardlist/leaderboardlist.html', context)
     
 def chooseMonth(request):
-    months = getMonths('Not Important Right Now')
+    months = getMonths()
     context = { 'months': months }
     return render(request, 'leaderboardlist/chooseMonths.html', context)
