@@ -20,15 +20,20 @@ def getSectorNum(sector):
         return int(sector.name[:3])
 
 def getTopCompanies(vvp, month, svs, sos):
-    emps = []
-    if svs == 'all':
-        emps = Employer.objects.filter(active=True)
-    elif svs == 'size':
-        emps = Employer.objects.filter(size_cat=sos, active=True)
+    emps = Employer.objects.filter(active=True, sector__in=EmplSector.objects.filter(parent=None))
+    if svs == 'size':
+        emps = emps.filter(size=sos)
     elif svs == 'sector':
-        emps = Employer.objects.filter(sector=sos, active=True)
+        sector = EmplSector.objects.get(pk=sos)
+        if sector.parent != None:
+            emps = Employer.objects.filter(active=True, sector=sos)
+        else:
+            emps = emps.filter(sector=sos)
     elif svs == 'name':
-        emps = sorted(Employer.objects.filter(active=True), key=attrgetter('name'))
+        nameList = []
+        for emp in sorted(emps, key=attrgetter('name')):
+            nameList += [(emp.name, 0, 0),]
+        return nameList
     companyList = []
     if vvp == 'perc':
         for company in emps:
@@ -43,17 +48,14 @@ def getTopCompanies(vvp, month, svs, sos):
         for company in emps:
             nr_surveys = company.get_nr_surveys(month)
             companyList += [(company.name, nr_surveys, str(nr_surveys)),]
-    if svs != 'name':
-        topEmps = sorted(companyList, key=itemgetter(1), reverse=True)
-    else:
-        topEmps = companyList
+    topEmps = sorted(companyList, key=itemgetter(1), reverse=True)
     return topEmps
 
 def getEmpCheckinMatrix(emp): 
     commuterModes = ['c', 'cp', 'w', 'b', 't', 'tc', 'o']
     checkinMatrix = []
     todayPos = -1
-    empCommutes = Commutersurvey.objects.filter(month__in=getMonths(), employer__contains=emp.name)
+    empCommutes = emp.get_surveys('all')
     for todayWM in commuterModes:
         todayPos += 1
         checkinMatrix += [[],]
@@ -63,10 +65,7 @@ def getEmpCheckinMatrix(emp):
     return checkinMatrix
 
 def getBreakDown(emp, month):
-    if month == "all":
-        empSurveys = Commutersurvey.objects.filter(employer=emp, month__in=getMonths())
-    else:
-        empSurveys = Commutersurvey.objects.filter(employer=emp, month=month)
+    empSurveys = emp.get_surveys(month)
     unhealthySwitches = 0
     carCommuters = 0
     greenCommuters = 0
