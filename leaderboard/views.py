@@ -134,7 +134,7 @@ def getCanvasJSChartData(emp):
     ]
     intToModeConversion = ['gs', 'gc', 'cc', 'us']
     iTMSConv = ['Green Switches','Green Commutes', 'Car Commutes', 'Other']
-    for month in getMonths():
+    for month in reversed(getMonths()):
         breakDown = getBreakDown(emp, month)
         for i in range(0, 4):
             chartData[i]['dataPoints'] += [{ 'label': month, 'y': breakDown[intToModeConversion[i]], 'name': iTMSConv[i] },]
