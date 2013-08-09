@@ -22,7 +22,7 @@ def getSectorNum(sector):
 def getTopCompanies(vvp, month, svs, sos):
     emps = Employer.objects.filter(active=True, sector__in=EmplSector.objects.filter(parent=None))
     if svs == 'size':
-        emps = emps.filter(size=sos)
+        emps = emps.filter(size_cat=sos)
     elif svs == 'sector':
         sector = EmplSector.objects.get(pk=sos)
         if sector.parent != None:
@@ -70,16 +70,28 @@ def getBreakDown(emp, month):
     carCommuters = 0
     greenCommuters = 0
     greenSwitches = 0
+    newUS = 0
+    newCC = 0
+    newGC = 0
+    newGS = 0
     for survey in empSurveys:
-        if survey.to_work_switch == 1: unhealthySwitches += 1
-        elif survey.to_work_switch == 2: carCommuters += 1
-        elif survey.to_work_switch == 3: greenCommuters += 1
-        elif survey.to_work_switch == 4: greenSwitches += 1
-        if survey.from_work_switch == 1: unhealthySwitches += 1
-        elif survey.from_work_switch == 2: carCommuters += 1
-        elif survey.from_work_switch == 3: greenCommuters += 1
-        elif survey.from_work_switch == 4: greenSwitches += 1
-        #if 
+        #if survey.email not i 
+        if survey.to_work_switch == 1: 
+            unhealthySwitches += 1
+        elif survey.to_work_switch == 2: 
+            carCommuters += 1
+        elif survey.to_work_switch == 3: 
+            greenCommuters += 1
+        elif survey.to_work_switch == 4: 
+            greenSwitches += 1
+        if survey.from_work_switch == 1: 
+            unhealthySwitches += 1
+        elif survey.from_work_switch == 2: 
+            carCommuters += 1
+        elif survey.from_work_switch == 3: 
+            greenCommuters += 1
+        elif survey.from_work_switch == 4: 
+            greenSwitches += 1
     return { 'us': unhealthySwitches, 'cc': carCommuters, 'gc': greenCommuters, 'gs': greenSwitches, 'total':(len(empSurveys)*2) }
 
 def getCanvasJSChart(emp):
