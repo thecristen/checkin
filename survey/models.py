@@ -155,14 +155,7 @@ class Commutersurvey(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     
     objects = models.GeoManager()
-    
-    def __unicode__(self):
-        return u'%s' % (self.id)   
-    
-    class Meta:
-        verbose_name = 'Commuter Survey'
-        verbose_name_plural = 'Commuter Surveys'     
-        CheckinDict = {
+    CheckinDict = {
             ('c', 'c'):2, ('c', 'cp'):4, ('c', 'w'):4, ('c', 'b'):4, ('c', 't'):4, ('c', 'tc'):4, ('c', 'o'):1,
             ('cp', 'c'):1, ('cp', 'cp'):3, ('cp', 'w'):4, ('cp', 'b'):4, ('cp', 't'):4, ('cp', 'tc'):4, ('cp', 'o'):1,
             ('w', 'c'):1, ('w', 'cp'):3, ('w', 'w'):3, ('w', 'b'):3, ('w', 't'):3, ('w', 'tc'):3, ('w', 'o'):1,
@@ -171,13 +164,21 @@ class Commutersurvey(models.Model):
             ('tc', 'c'):1, ('tc', 'cp'):3, ('tc', 'w'):3, ('tc', 'b'):3, ('tc', 't'):3, ('tc', 'tc'):3, ('tc', 'o'):1,
             ('o', 'c'):1, ('o', 'cp'):1, ('o', 'w'):1, ('o', 'b'):1, ('o', 't'):1, ('o', 'tc'):1, ('o', 'o'):1,
     }
+    
+    def __unicode__(self):
+        return u'%s' % (self.id)   
+    
+    class Meta:
+        verbose_name = 'Commuter Survey'
+        verbose_name_plural = 'Commuter Surveys'     
+        
     @property
     def to_work_switch(self):
-        return self.Meta.CheckinDict[(to_work_normally, to_work_today)]
+        return self.CheckinDict[(self.to_work_normally, self.to_work_today)]
 
     @property
     def from_work_switch(self):
-        return self.Meta.CheckinDict[(from_work_normally, from_work_today)]
+        return self.CheckinDict[(self.from_work_normally, self.from_work_today)]
 
 
 class Schooldistrict(models.Model):
