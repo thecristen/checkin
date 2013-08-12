@@ -165,7 +165,7 @@ class Commutersurvey(models.Model):
             ('o', 'c'):1, ('o', 'cp'):1, ('o', 'w'):1, ('o', 'b'):1, ('o', 't'):1, ('o', 'tc'):1, ('o', 'o'):1,
     }
     
-    def __unicode__(self):
+    def __unicode__(self): 
         return u'%s' % (self.id)   
     
     class Meta:
@@ -174,10 +174,18 @@ class Commutersurvey(models.Model):
         
     @property
     def to_work_switch(self):
+        if self.to_work_today is None:
+            self.to_work_today = 'o'
+        if self.to_work_normally is None:
+            self.to_work_normally = 'o'
         return self.CheckinDict[(self.to_work_normally, self.to_work_today)]
 
     @property
     def from_work_switch(self):
+        if self.from_work_today is None:
+            self.from_work_today = 'o'
+        if self.from_work_normally is None:
+            self.from_work_normally = 'o'
         return self.CheckinDict[(self.from_work_normally, self.from_work_today)]
 
 
