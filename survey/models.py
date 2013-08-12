@@ -5,6 +5,7 @@ from leaderboard.models import getMonths
 
 # lazy translation
 from django.utils.translation import ugettext_lazy as _
+from collections import namedtuple
 
 # south introspection rules 
 try:
@@ -154,6 +155,15 @@ class Commutersurvey(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     
     objects = models.GeoManager()
+    CheckinDict = {
+            ('c', 'c'):2, ('c', 'cp'):4, ('c', 'w'):4, ('c', 'b'):4, ('c', 't'):4, ('c', 'tc'):4, ('c', 'o'):1,
+            ('cp', 'c'):1, ('cp', 'cp'):3, ('cp', 'w'):4, ('cp', 'b'):4, ('cp', 't'):4, ('cp', 'tc'):4, ('cp', 'o'):1,
+            ('w', 'c'):1, ('w', 'cp'):3, ('w', 'w'):3, ('w', 'b'):3, ('w', 't'):3, ('w', 'tc'):3, ('w', 'o'):1,
+            ('b', 'c'):1, ('b', 'cp'):3, ('b', 'w'):3, ('b', 'b'):3, ('b', 't'):3, ('b', 'tc'):3, ('b', 'o'):1,
+            ('t', 'c'):1, ('t', 'cp'):3, ('t', 'w'):4, ('t', 'b'):4, ('t', 't'):3, ('t', 'tc'):4, ('t', 'o'):1,
+            ('tc', 'c'):1, ('tc', 'cp'):3, ('tc', 'w'):3, ('tc', 'b'):3, ('tc', 't'):3, ('tc', 'tc'):3, ('tc', 'o'):1,
+            ('o', 'c'):1, ('o', 'cp'):1, ('o', 'w'):1, ('o', 'b'):1, ('o', 't'):1, ('o', 'tc'):1, ('o', 'o'):1,
+    }
     
     def __unicode__(self):
         return u'%s' % (self.id)   
@@ -161,20 +171,14 @@ class Commutersurvey(models.Model):
     class Meta:
         verbose_name = 'Commuter Survey'
         verbose_name_plural = 'Commuter Surveys'     
-
+        
     @property
     def to_work_switch(self):
-        if self.to_work_today == 'c': tw = 1
-        else: tw = 3
-        if self.to_work_normally == 'c': tw += 1
-        return tw
+        return self.CheckinDict[(self.to_work_normally, self.to_work_today)]
 
     @property
     def from_work_switch(self):
-        if self.from_work_today == 'c': fw = 1
-        else: fw = 3
-        if self.to_work_normally == 'c': fw += 1
-        return fw
+        return self.CheckinDict[(self.from_work_normally, self.from_work_today)]
 
 
 class Schooldistrict(models.Model):
