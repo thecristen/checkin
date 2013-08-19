@@ -15,6 +15,10 @@ COLOR_SCHEME = {
 		'rgc': '#65AB4B',
 		'rcc': '#FF2600',
 		'rus': '#9437FF',
+		'ngs': '#0096FF',
+		'ngc': '#65AB4B',
+		'ncc': '#FF2600',
+		'nus': '#9437FF',
 		}
 
 def index(request):
