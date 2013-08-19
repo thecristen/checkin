@@ -217,75 +217,75 @@ String.prototype.format = function() {
                 <td><img src="/static/img/tc.png" height="32" width="32" class="img-circle" title="Telecommuting on normal days"></img></td>
                 <td><img src="/static/img/o.png" height="32" width="32" class="img-circle" title="Other transportaition on normal days"></img></td>
             </tr>
-            <tr class="error">
+            <tr>
                 <td><img src="/static/img/c.png" height="32" width="32" class="img-circle" title="Driving a personal car on Walk-Ride days"></img></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td class='cctd'></td>
+                <td class='ustd'></td>
+                <td class='ustd'></td>
+                <td class='ustd'></td>
+                <td class='ustd'></td>
+                <td class='ustd'></td>
+                <td class='ustd'></td>
             </tr>
-            <tr class="success">
+            <tr>
                 <td><img src="/static/img/cp.png" height="32" width="32" class="img-circle" title="Carpooling on Walk-Ride days"></img></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td class='gstd'></td>
+                <td class='gctd'></td>
+                <td class='gctd'></td>
+                <td class='gctd'></td>
+                <td class='gctd'></td>
+                <td class='gctd'></td>
+                <td class='ustd'></td>
             </tr>
-            <tr class="success">
+            <tr>
                 <td><img src="/static/img/w.png" height="32" width="32" class="img-circle" title="Walking on Walk-Ride days"></img></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td class='gstd'></td>
+                <td class='gstd'></td>
+                <td class='gctd'></td>
+                <td class='gctd'></td>
+                <td class='gstd'></td>
+                <td class='gctd'></td>
+                <td class='ustd'></td>
             </tr>
-            <tr class="success">
+            <tr>
                 <td><img src="/static/img/b.png" height="32" width="32" class="img-circle" title="Biking on Walk-Ride days"></img></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td class='gstd'></td>
+                <td class='gstd'></td>
+                <td class='gctd'></td>
+                <td class='gctd'></td>
+                <td class='gstd'></td>
+                <td class='gctd'></td>
+                <td class='ustd'></td>
             </tr>
-            <tr class="success">
+            <tr>
                 <td><img src="/static/img/t.png" height="32" width="32" class="img-circle" title="Taking public transit on Walk-Ride days"></img></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td class='gstd'></td>
+                <td class='gstd'></td>
+                <td class='gctd'></td>
+                <td class='gctd'></td>
+                <td class='gctd'></td>
+                <td class='gctd'></td>
+                <td class='ustd'></td>
             </tr>
-            <tr class="success">
+            <tr>
                 <td><img src="/static/img/tc.png" height="32" width="32" class="img-circle" title="Telecommuting on Walk-Ride days"></img></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td class='gstd'></td>
+                <td class='gstd'></td>
+                <td class='gctd'></td>
+                <td class='gctd'></td>
+                <td class='gstd'></td>
+                <td class='gctd'></td>
+                <td class='ustd'></td>
             </tr>
-            <tr class="success">
+            <tr>
                 <td><img src="/static/img/o.png" height="32" width="32" class="img-circle" title="Other transportation on Walk-Ride days"></img></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td class='ustd'></td>
+                <td class='ustd'></td>
+                <td class='ustd'></td>
+                <td class='ustd'></td>
+                <td class='ustd'></td>
+                <td class='ustd'></td>
+                <td class='ustd'></td>
             </tr>
         </table>
     </div>
@@ -295,5 +295,17 @@ String.prototype.format = function() {
     .labelHeader {
         text-align: right;
     }
+	.gstd {
+		background-color: #4CB5FF;
+	}
+	.gctd {
+		background-color: #93C480;
+	}
+	.cctd {
+		background-color: #FF664C;
+	}
+	.ustd {
+		background-color: #B472FF;
+	}
 </style>
 {% endblock %}
