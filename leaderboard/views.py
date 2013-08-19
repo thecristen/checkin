@@ -325,11 +325,9 @@ def leaderboard_context():
 
 def leaderboard(request):
 	if request.method == "POST":
-		if request.POST['request_type'] == 'nvo':
-			reply_data = leaderboard_nvo_data(request.POST['focusEmployer'])
-		elif request.POST['request_type'] == 'full_response':
+		if request.POST['just_emp'] == 'false':
 			reply_data = leaderboard_reply_data(request.POST['selVVP'], request.POST['selMonth'], request.POST['selSVS'], request.POST['selSOS'],)
-		elif request.POST['request_type'] == 'just_emp':
+		elif request.POST['just_emp'] == 'true':
 			reply_data = leaderboard_company_detail(request.POST['focusEmployer'])
 		response = HttpResponse(json.dumps(reply_data), content_type='application/json')
 		return response

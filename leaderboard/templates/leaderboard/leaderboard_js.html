@@ -14,30 +14,10 @@ $("document").ready(function() {
     $("#id_companies").change(function() {
         getNewEmp($("#id_companies").val());
         });
-	$("#nvo_toggle").click(
     getResults();
 });
-function nvoToggle() {
-	if ($("#nvo_toggle").hasClass("active") {
-		var chart = new CanvasJS.Chart("breakDownGraph", window.reg_chart_data);
-		chart.render();
-		$("#nvo_toggle").removeClass("active");
-	}
-	else {
-		if (!(window.nvo_chart_data)) {
-			var hostname = top.location.host.toString();
-			$.post("http://"+hostname+"/leaderboard/", { "request_type": "nvo", "focusEmployer": $("#id_companies").val() }, function(data, status) {
-				window.nvo_chart_data = data.chart_data
-			}, 'json');
-			var chart = new CanvasJS.Chart("breakDownGraph", window.nvo_chart_data);
-			chart.render();
-		else {
-			var chart = new CanvasJS.Chart("breakDownGraph", window.nvo_chart_data);
-			chart.render();
-		}
 function getResults() {
     $("#spinner").spin("small");
-	window.nvo_chart_data = false;
     $("#spinnerLabel").removeClass("hidden");
     var hostname = top.location.host.toString();
     $.post("http://"+hostname+"/leaderboard/",
@@ -92,7 +72,6 @@ function makeChange(data, status) {
  })([,"st","nd","rd"]);
 
 function newEmp(data, status) {
-	window.reg_chart_data = data.chart_data
     var chart = new CanvasJS.Chart("breakDownGraph", data.chart_data);
     chart.render();
     $("#total_checkins").text(data.total_breakdown.total);
@@ -186,13 +165,10 @@ String.prototype.format = function() {
     </div>
 </div>
 <div class="row">
-    <div class="control-group span8">
+    <div class="control-group span9">
         <select id="id_companies" class="span8">
         </select>
     </div>
-	<div class="span2">
-		<button type="button" class="btn btn-success" id="nvo_toggle" data-toggle="button" title="May take a while to load">Show New Commutes</button>
-	</div>
     <div class="span1" id="spinnerLabel">
         <h4>Loading...</h4>
     </div>
