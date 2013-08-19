@@ -8,6 +8,7 @@ from django.db.models import Sum, Count
 from django.forms import ModelForm
 
 from survey.models import School, Schooldistrict, Commutersurvey, Employer, EmplSector, EmplSizeCategory, Studentsurvey, Studentgroup
+from leaderboard.models import Month
 # from django.contrib import admin
 from django.contrib.gis import admin
 
@@ -80,6 +81,12 @@ class CommutersurveyAdmin(admin.OSMGeoAdmin):
     search_fields = ['name', 'employer']
     actions = [export_as_csv]
 
+class MonthsAdmin(admin.ModelAdmin):
+    search_fields = ['month']
+    list_display_links = ['id']
+    list_display = ['id', 'month', 'url_month', 'active']
+    list_editable = ['month', 'url_month', 'active']
+    actions = [export_as_csv]
 
 class DistrictAdmin(admin.OSMGeoAdmin):
     prepopulated_fields = {'slug': ('distname',)}
@@ -144,3 +151,4 @@ admin.site.register(EmplSizeCategory, EmployerLookupAdmin)
 admin.site.register(EmplSector, EmployerLookupAdmin)
 admin.site.register(Studentsurvey, StudentsurveyAdmin)
 admin.site.register(Studentgroup, StudentgroupAdmin)
+admin.site.register(Month, MonthsAdmin)
