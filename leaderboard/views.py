@@ -193,10 +193,10 @@ def getCanvasJSChartData(emp):
 			]
 	intToModeConversion = ['gs', 'gc', 'cc', 'us']
 	iTMSConv = ['Green Switches','Green Commutes', 'Car Commutes', 'Other']
-	for month in reversed(getMonths()):
-		breakDown = getBreakDown(emp, month)
+	for month in Month.objects.filter(active=True).order_by('id'):
+		breakDown = getBreakDown(emp, month.month)
 		for i in range(0, 4):
-			chartData[i]['dataPoints'] += [{ 'label': month, 'y': breakDown[intToModeConversion[i]], 'name': iTMSConv[i] },]
+			chartData[i]['dataPoints'] += [{ 'label': month.short_name, 'y': breakDown[intToModeConversion[i]], 'name': iTMSConv[i] },]
 	return chartData
 
 def getNvRcJSChartData(emp):
