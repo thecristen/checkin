@@ -62,6 +62,10 @@ class EmployerLookupAdmin(admin.ModelAdmin):
     list_editable = ['name']
     actions = [export_as_csv]
 
+class EmployerSectorAdmin(admin.ModelAdmin):
+	list_display = ['id', 'name', 'parent']
+	list_editable = ['name', 'parent']
+	actions = [export_as_csv]
 
 class CommutersurveyAdmin(admin.OSMGeoAdmin):
     fieldsets = [
@@ -148,7 +152,7 @@ admin.site.register(School, SchoolAdmin)
 admin.site.register(Commutersurvey, CommutersurveyAdmin)
 admin.site.register(Employer, EmployerAdmin)
 admin.site.register(EmplSizeCategory, EmployerLookupAdmin)
-admin.site.register(EmplSector, EmployerLookupAdmin)
+admin.site.register(EmplSector, EmployerSectorAdmin)
 admin.site.register(Studentsurvey, StudentsurveyAdmin)
 admin.site.register(Studentgroup, StudentgroupAdmin)
 admin.site.register(Month, MonthsAdmin)
