@@ -47,10 +47,10 @@ function makeChange(data, status) {
     $("#vvp-label").text($("#id_vol_v_perc option:selected").text());
     $('#id_companies').empty();
     if (data.vol_v_perc === 'perc') {
-        vvpMsg = '% participation';
+		vvpMsg = '% participation out of {0} employees';
     }
     else {
-        vvpMsg = ' check-ins';
+		vvpMsg = ' check-ins of {0} employees';
     }
     if ($("#id_svs").val() !== "name") {
         empOptFS = '{0} place is {1} with {2}{3}';
@@ -59,7 +59,7 @@ function makeChange(data, status) {
         empOptFS = '{1}';
     }
     for(var i=0; i<data.top_companies.length; i++) {
-        $('#id_companies').append('<option value="{0}">{1}</option>'.format(data.top_companies[i][0], empOptFS.format(Number.getOrdinalFor(i+1, true), data.top_companies[i][0], data.top_companies[i][2], vvpMsg)));
+        $('#id_companies').append('<option value="{0}">{1}</option>'.format(data.top_companies[i][0], empOptFS.format(Number.getOrdinalFor(i+1, true), data.top_companies[i][0], data.top_companies[i][2], vvpMsg.format(data.top_companies[i][3]))));
     }
     newEmp(data, status);
 }
@@ -97,7 +97,12 @@ function switchSOS() {
         $("#monthdiv").removeClass("hidden");
         $("#sos_label>strong").text("Select Size");
         $("#id_sos").empty();
-        $("#id_sos").html('<option value="1">Small (1-10 Employees)</option><option value="2">Medium (11-100 Employees)</option><option value="3">Large (101-1000 Employees)</option><option value="4">Largest (>1000 Employees)</option>');
+		if ($("#id_vol_v_perc").val() == 'vol') {
+        	$("#id_sos").html('<option value="1">Small (1-10 Employees)</option><option value="2">Medium (11-100 Employees)</option><option value="3">Large (101-1000 Employees)</option><option value="4" selected="true">Largest (>1000 Employees)</option>');
+		}
+		else {
+			$("#id_sos").html('<option value="1">Small (1-10 Employees)</option><option value="2" selected="true">Medium (11-100 Employees)</option><option value="3">Large (101-1000 Employees)</option><option value="4">Largest (>1000 Employees)</option>');
+		}
     }
     else if (newSOS == "sector") {
         $("#sosdiv").removeClass("hidden");
@@ -176,35 +181,41 @@ String.prototype.format = function() {
     </div>
 </div>
 <div class="row">
-    <div class="span6" id="breakDownGraph" style="height:300px">
-    </div>
-    <div class="span2" id="totalBreakDown">
-        <table class="table">
-            <tr>
-                <th id="totals"><h4>Totals: </h4></th>
-            </tr>
-            <tr>
-                <td><div class="gc text-right">Commutes:</div></td>
-                <td class="gc" id="total_checkins"></td>
-            </tr>
-            <tr>
-                <td><div class="text-right">Green Switches:</div></td>
-                <td class="gstd" id="total_gs"></td>
-            </tr>
-            <tr>
-                <td><div class="text-right">Green Commutes:</div></td>
-                <td class="gctd" id="total_gc"></td>
-            </tr>
-            <tr>
-                <td><div class="text-right">Car Commutes:</div></td>
-                <td class="cctd" id="total_cc"></td>
-            </tr>
-            <tr>
-                <td><div class="text-right">Other:</div></td>
-                <td class="ustd" id="total_us"></td>
-            </tr>
-        </table>
-    </div>
+	<div class="span6" style="height:400px">
+		<div class="spacer" style="height:100px"></div>
+		<div id="breakDownGraph" style="height:300px">
+		</div>
+	</div>
+	<div class="span2">
+		<div class="spacer" style="height:83px"></div>
+		<div id="totalBreakDown">
+			<table class="table">
+				<tr>
+					<th id="totals"><h4>Totals: </h4></th>
+				</tr>
+				<tr>
+					<td><div class="gc text-right">Commutes:</div></td>
+					<td class="gc" id="total_checkins"></td>
+				</tr>
+				<tr>
+					<td><div class="text-right">Green Switches:</div></td>
+					<td class="gstd" id="total_gs"></td>
+				</tr>
+				<tr>
+					<td><div class="text-right">Green Commutes:</div></td>
+					<td class="gctd" id="total_gc"></td>
+				</tr>
+				<tr>
+					<td><div class="text-right">Car Commutes:</div></td>
+					<td class="cctd" id="total_cc"></td>
+				</tr>
+				<tr>
+					<td><div class="text-right">Other:</div></td>
+					<td class="ustd" id="total_us"></td>
+				</tr>
+			</table>
+		</div>
+	</div>
     <div class="span4" id="breakDownTable">
         <table class="table table-bordered">
             <tr>
