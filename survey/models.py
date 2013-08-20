@@ -49,8 +49,7 @@ class EmplSizeCategory(models.Model):
 
 class EmplSector(models.Model):
 	name = models.CharField(max_length=100)
-	parent = models.CharField(max_length=100, default=None, null=True)
-
+	parent = models.CharField(max_length=100, default=None, null=True, blank=True)
 	class Meta:
 		verbose_name = _('Employer Sector')
 		verbose_name_plural = _('Employer Sectors')
