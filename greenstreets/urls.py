@@ -18,16 +18,14 @@ urlpatterns = patterns('',
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     # Uncomment the next line to enable the admin:
-    #url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', include(admin.site.urls)),
 
     (r'^grappelli/', include('grappelli.urls')),
-    url(r'^leaderboard/(?P<month>[-\w]+)/(?P<vol_v_perc>\w+)/(?P<svs>\w+)/(?P<sos>\w+)/(?P<company>\w+)/$', 'leaderboard.views.leaderboard', name='leaderboard'),
-    url(r'^leaderboard/(?P<month>[-\w]+)/(?P<vol_v_perc>\w+)/(?P<svs>\w+)/(?P<sos>\w+)/$', 'leaderboard.views.leaderboard'),
-    url(r'^leaderboard-bare/(?P<month>[-\w]+)/(?P<vol_v_perc>\w+)/(?P<svs>\w+)/(?P<sos>\w+)/$', 'leaderboard.views.leaderboard_bare'),
     url(r'^leaderboard/$', 'leaderboard.views.leaderboard'),
     url(r'^leaderboard-bare/$', 'leaderboard.views.leaderboard_bare'),
     url(r'^test-chart/$', 'leaderboard.views.testchart'),
     url(r'^emplbreakdown/(?P<month>[-\w]+)/$', 'leaderboardlist.views.empBreakDown'),
+    url(r'^emplbreakdown/$', 'leaderboardlist.views.chooseMonth'),
 )
 
 urlpatterns += staticfiles_urlpatterns()
