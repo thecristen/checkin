@@ -138,7 +138,6 @@ INSTALLED_APPS = (
     'survey',
     'qrcode',
     'leaderboard',
-    'django_extensions',
     'leaderboardlist',
     'south',
 )
