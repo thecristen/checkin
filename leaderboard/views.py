@@ -56,13 +56,13 @@ def getTopCompanies(vvp, month, svs, sos):
 				percent = (100 * float(company.get_nr_surveys(month))/float(company.nr_employees))
 				if month == 'all':
 					percent /= len(getMonths())
-				companyList += [(company.name, percent, ('%.1f' % percent)),]
+				companyList += [(company.name, percent, ('%.1f' % percent), company.nr_employees),]
 			except TypeError:
 				pass
 	else:
 		for company in emps:
 			nr_surveys = company.get_nr_surveys(month)
-			companyList += [(company.name, nr_surveys, str(nr_surveys)),]
+			companyList += [(company.name, nr_surveys, str(nr_surveys), company.nr_employees),]
 	topEmps = sorted(companyList, key=itemgetter(1), reverse=True)
 	return topEmps
 
