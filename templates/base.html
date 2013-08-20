@@ -71,22 +71,22 @@
 
     <div class="main container {{ LANGUAGE_CODE }}">
 
-        <header class="page-header">
-            <div class="row">
-              <div class="span12">
-                {% block pageheader %}{% endblock pageheader %}
-              </div>
+    <header class="page-header">
+        <div class="row">
+            <div class="span12">
+            {% block pageheader %}{% endblock pageheader %}
             </div>
-        </header>
-    
-        {% block body %}{% endblock %}
+        </div>
+    </header>
 
-        <footer class="footer">
-            <p>
-                {% trans "Questions? Please contact" %} <a class="nowrap" href="mailto:info@GoGreenStreets.org?subject=Walk/Ride Day Check-in Question">info@GoGreenStreets.org</a><br />
-                <!-- &copy; <a href="http://www.mapc.org" title="Metropolitan Area Planning Council">MAPC</a> 2013 -->
-            </p>    
-        </footer>
+    {% block body %}{% endblock %}
+
+    <footer class="footer">
+        <p>
+            {% trans "Questions? Please contact" %} <a class="nowrap" href="mailto:info@GoGreenStreets.org?subject=Walk/Ride Day Check-in Question">info@GoGreenStreets.org</a><br />
+            <!-- &copy; <a href="http://www.mapc.org" title="Metropolitan Area Planning Council">MAPC</a> 2013 -->
+        </p>    
+    </footer>
     
     </div>
 
@@ -94,7 +94,7 @@
     <script src="/static/libs/jquery-1.9.1.min.js" type="text/javascript"></script>
 
     {% block javascript %}{% endblock %}
-
+<!--
     <script type="text/javascript">
       var uvOptions = {};
       (function() {
@@ -103,6 +103,6 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(uv, s);
       })();
     </script>
-    
+	-->    
 </body>
 </html>
