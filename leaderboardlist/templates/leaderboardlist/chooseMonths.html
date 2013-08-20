@@ -6,17 +6,26 @@
 {% endblock %}
 {% block pageheader %}<h4>Choose the Month to Display Check-In Data For All Companies</h4>{% endblock %}
 {% block body %}
-<div class="btn-group open">
-    <button class="btn dropdown-toggle" data-toggle="dropdown">
-        Choose Month 
-        <span class="caret"></span>
-    </button>
-    <ul class="dropdown-menu">
-        {% for month in months %}
-        <li>
-        <a href="/emplbreakdown/{{ month|slugify }}">{{ month }}</a>
-        </li>
-        {% endfor %}
-    </ul>
+<div class="row">
+    <div class="span4">
+        <div class="btn-group open">
+            <button class="btn dropdown-toggle" data-toggle="dropdown">
+                Choose Month 
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                {% for month in months %}
+                <li>
+                <a href="/emplbreakdown/{{ month|slugify }}">{{ month }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="span4">
+        <a class="btn btn-large btn-success" href="/leaderboard/">
+            Go to the Leaderboard
+        </a>
+    </div>
 </div>
 {% endblock %}

@@ -8,6 +8,7 @@ from django.db.models import Sum, Count
 from django.forms import ModelForm
 
 from survey.models import School, Schooldistrict, Commutersurvey, Employer, EmplSector, EmplSizeCategory, Studentsurvey, Studentgroup
+from leaderboard.models import Month
 # from django.contrib import admin
 from django.contrib.gis import admin
 
@@ -61,6 +62,10 @@ class EmployerLookupAdmin(admin.ModelAdmin):
     list_editable = ['name']
     actions = [export_as_csv]
 
+class EmployerSectorAdmin(admin.ModelAdmin):
+	list_display = ['id', 'name', 'parent']
+	list_editable = ['name', 'parent']
+	actions = [export_as_csv]
 
 class CommutersurveyAdmin(admin.OSMGeoAdmin):
     fieldsets = [
@@ -80,6 +85,12 @@ class CommutersurveyAdmin(admin.OSMGeoAdmin):
     search_fields = ['name', 'employer']
     actions = [export_as_csv]
 
+class MonthsAdmin(admin.ModelAdmin):
+    search_fields = ['month']
+    list_display_links = ['id']
+    list_display = ['id', 'month', 'url_month', 'short_name', 'active']
+    list_editable = ['month', 'url_month', 'short_name', 'active']
+    actions = [export_as_csv]
 
 class DistrictAdmin(admin.OSMGeoAdmin):
     prepopulated_fields = {'slug': ('distname',)}
@@ -141,6 +152,7 @@ admin.site.register(School, SchoolAdmin)
 admin.site.register(Commutersurvey, CommutersurveyAdmin)
 admin.site.register(Employer, EmployerAdmin)
 admin.site.register(EmplSizeCategory, EmployerLookupAdmin)
-admin.site.register(EmplSector, EmployerLookupAdmin)
+admin.site.register(EmplSector, EmployerSectorAdmin)
 admin.site.register(Studentsurvey, StudentsurveyAdmin)
 admin.site.register(Studentgroup, StudentgroupAdmin)
+admin.site.register(Month, MonthsAdmin)
