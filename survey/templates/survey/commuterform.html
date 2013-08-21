@@ -61,10 +61,20 @@ $(document).ready(function() {
     }
 
     // dropdown for current +2 months selectable W/R Days
+	/*
+	 *THIS NEXT VARIABLE DETERMINES THE DAY OF THE WEEK FOR THE DEADLINE
+	 *IT MUST BE AN INTEGER FROM 1 TO 7 CORRESPONDING TO THE DAYS OF THE WEEK FROM MONDAY TO SUNDAY
+	 *THIS IS THE NUMBER TO CHANGE
+     *		                |
+     *					   \ /   */
+	var deadlineDayOfWeek = 2;
+	/*
+	 * DO NOT CHANGE THE NEXT PART
+	 */
     
-    var prevDeadline = getLastFriday(moment().subtract('months', 1)).day(8); //gets the monday after the walk ride day of last month
-    var curDeadline = getLastFriday(moment()).day(8);
-    var nextDeadline = getLastFriday(moment().add('months', 1)).day(8);
+    var prevDeadline = getLastFriday(moment().subtract('months', 1)).day(deadlineDayOfWeek + 7); //gets the monday after the walk ride day of last month
+    var curDeadline = getLastFriday(moment()).day(deadlineDayOfWeek + 7);
+    var nextDeadline = getLastFriday(moment().add('months', 1)).day(deadlineDayOfWeek + 7);
     if (moment().unix() <= prevDeadline.unix()) { //if today is before the deadline for last month's walk-ride
         startPos = -1;    
     }
