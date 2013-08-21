@@ -66,7 +66,7 @@ def getTopCompanies(vvp, month, svs, sos):
 	topEmps = sorted(companyList, key=itemgetter(1), reverse=True)
 	return topEmps
 
-def getEmpCheckinMatrix(emp): 
+def getEmpCheckinMatrix(emp):
 	commuterModes = ['c', 'cp', 'w', 'b', 't', 'tc', 'o']
 	checkinMatrix = []
 	todayPos = -1
@@ -90,22 +90,22 @@ def getBreakDown(emp, month):
 	newGC = 0
 	newGS = 0
 	for survey in empSurveys:
-		#if survey.email not i 
-		if survey.to_work_switch == 1: 
+		#if survey.email not i
+		if survey.to_work_switch == 1:
 			unhealthySwitches += 1
-		elif survey.to_work_switch == 2: 
+		elif survey.to_work_switch == 2:
 			carCommuters += 1
-		elif survey.to_work_switch == 3: 
+		elif survey.to_work_switch == 3:
 			greenCommuters += 1
-		elif survey.to_work_switch == 4: 
+		elif survey.to_work_switch == 4:
 			greenSwitches += 1
-		if survey.from_work_switch == 1: 
+		if survey.from_work_switch == 1:
 			unhealthySwitches += 1
-		elif survey.from_work_switch == 2: 
+		elif survey.from_work_switch == 2:
 			carCommuters += 1
-		elif survey.from_work_switch == 3: 
+		elif survey.from_work_switch == 3:
 			greenCommuters += 1
-		elif survey.from_work_switch == 4: 
+		elif survey.from_work_switch == 4:
 			greenSwitches += 1
 	return { 'us': unhealthySwitches, 'cc': carCommuters, 'gc': greenCommuters, 'gs': greenSwitches, 'total':(len(empSurveys)*2) }
 
@@ -145,7 +145,6 @@ def getCanvasJSChart(emp, new=False):
 			'title': {
 				'text': "Walk Ride Day Participation Over Time",
 				'fontSize': 20 },
-			'colorSet': 'commuterModes',
 			'data': chartData
 			}
 	if new:
@@ -196,7 +195,8 @@ def getCanvasJSChartData(emp):
 	for month in Month.objects.filter(active=True).order_by('id'):
 		breakDown = getBreakDown(emp, month.month)
 		for i in range(0, 4):
-			chartData[i]['dataPoints'] += [{ 'label': month.short_name, 'y': breakDown[intToModeConversion[i]], 'name': iTMSConv[i] },]
+			if breakDown[intToModeConversion[i]] != 0:
+				chartData[i]['dataPoints'] += [{ 'label': month.short_name, 'y': breakDown[intToModeConversion[i]], 'name': iTMSConv[i] },]
 	return chartData
 
 def getNvRcJSChartData(emp):
@@ -205,7 +205,16 @@ def getNvRcJSChartData(emp):
 				'type': "stackedColumn",
 				'color': COLOR_SCHEME['ngs'],
 				'legendText': 'New Green Switches',
-				'showInLegend': True,
+				'showInLegend': 'true',
+				'toolTipContent': '{name}: {y}',
+				'dataPoints': [
+					],
+				},
+			{
+				'type': "stackedColumn",
+				'color': COLOR_SCHEME['rgs'],
+				'legendText': 'Returning Green Switches',
+				'showInLegend': 'true',
 				'toolTipContent': '{name}: {y}',
 				'dataPoints': [
 					],
@@ -214,7 +223,16 @@ def getNvRcJSChartData(emp):
 				'type': "stackedColumn",
 				'color': COLOR_SCHEME['ngc'],
 				'legendText': 'New Green Commutes',
-				'showInLegend': True,
+				'showInLegend': 'true',
+				'toolTipContent': '{name}: {y}',
+				'dataPoints': [
+					],
+				},
+			{
+				'type': "stackedColumn",
+				'color': COLOR_SCHEME['rgc'],
+				'legendText': 'Returning Green Commutes',
+				'showInLegend': 'true',
 				'toolTipContent': '{name}: {y}',
 				'dataPoints': [
 					],
@@ -223,7 +241,16 @@ def getNvRcJSChartData(emp):
 				'type': "stackedColumn",
 				'color': COLOR_SCHEME['ncc'],
 				'legendText': 'New Car Commutes',
-				'showInLegend': True,
+				'showInLegend': 'true',
+				'toolTipContent': '{name}: {y}',
+				'dataPoints': [
+					],
+				},
+			{
+				'type': "stackedColumn",
+				'color': COLOR_SCHEME['rcc'],
+				'legendText': 'Returning Car Commutes',
+				'showInLegend': 'true',
 				'toolTipContent': '{name}: {y}',
 				'dataPoints': [
 					],
@@ -232,54 +259,27 @@ def getNvRcJSChartData(emp):
 				'type': "stackedColumn",
 				'color': COLOR_SCHEME['nus'],
 				'legendText': 'New Other Commutes',
-				'showInLegend': True,
+				'showInLegend': 'true',
 				'toolTipContent': '{name}: {y}',
 				'dataPoints': [
 					],
 				},
 			{
 				'type': "stackedColumn",
-				'color': COLOR_SCHEME['ngs'],
-				'legendText': 'Returning Green Switches',
-				'showInLegend': True,
+				'color': COLOR_SCHEME['rus'],
+				'legendText': 'Returning Other Commutes',
+				'showInLegend': 'true',
 				'toolTipContent': '{name}: {y}',
 				'dataPoints': [
 					],
 				},
-			{
-				'type': "stackedColumn",
-				'color': COLOR_SCHEME['ngc'],
-				'legendText': 'Returning Green Commutes',
-				'showInLegend': True,
-				'toolTipContent': '{name}: {y}',
-				'dataPoints': [
-					],
-				},
-			{
-					'type': "stackedColumn",
-					'color': COLOR_SCHEME['ncc'],
-					'legendText': 'Returning Car Commutes',
-					'showInLegend': True,
-					'toolTipContent': '{name}: {y}',
-					'dataPoints': [
-						],
-					},
-			{
-					'type': "stackedColumn",
-					'color': COLOR_SCHEME['nus'],
-					'legendText': 'Returning Other Commutes',
-					'showInLegend': True,
-					'toolTipContent': '{name}: {y}',
-					'dataPoints': [
-						],
-					},
 			]
-	intToModeConversion = ['ngs', 'ngc', 'ncc', 'nus', 'rgs', 'rgc', 'rcc', 'rus',]
-	iTMSConv = ['New Green Switches', 'New Green Commutes', 'New Car Commutes', 'New Other', 'Returning Green Switches', 'Returning Green Commutes', 'Returning Car Commutes', 'Returning Other']
+	intToModeConversion = ['ngs', 'rgs', 'ngc', 'rgc', 'ncc', 'rcc', 'nus', 'rus']
+	iTMSConv = ['New Green Switches', 'Returning Green Switches', 'New Green Commutes', 'Returning Green Commutes', 'New Car Commutes', 'Returning Car Commutes', 'New Other', 'Returning Other']
 	for month in reversed(getMonths()):
 		breakDown = getNewVOldBD(emp, month)
 		for i in range(0, 8):
-			chartData[i]['dataPoints'] += [{ 'label': month, 'y': breakDown[intToModeConversion[i]], 'name': iTMSConv[i] },]
+			chartData[i]['dataPoints'] += [{ 'label': str(month), 'y': breakDown[intToModeConversion[i]], 'name': str(iTMSConv[i]) },]
 	return chartData
 
 def leaderboard_nvo_data(empName):
@@ -287,7 +287,7 @@ def leaderboard_nvo_data(empName):
 	return getCanvasJSChart(emp, new=True)
 
 def leaderboard_reply_data(vol_v_perc, month, svs, sos, focusEmployer=None):
-	topEmps = getTopCompanies(vol_v_perc, month, svs, sos) 
+	topEmps = getTopCompanies(vol_v_perc, month, svs, sos)
 	if focusEmployer is None and len(topEmps) > 0:
 		focusEmployer = topEmps[0]
 		emp = Employer.objects.get(name=focusEmployer[0])
@@ -295,9 +295,9 @@ def leaderboard_reply_data(vol_v_perc, month, svs, sos, focusEmployer=None):
 		emp = Employer.objects.get(name=focusEmployer)
 	elif type(focusEmployer) is Employer:
 		emp = focusEmployer
-	reply_data = { 
-			'chart_data': getCanvasJSChart(emp), 
-			'top_companies': topEmps, 
+	reply_data = {
+			'chart_data': getCanvasJSChart(emp),
+			'top_companies': topEmps,
 			'checkin_matrix': getEmpCheckinMatrix(emp),
 			'total_breakdown': getBreakDown(emp, "all"),
 			'vol_v_perc': vol_v_perc,
@@ -318,7 +318,7 @@ def leaderboard_company_detail(empName):
 
 def leaderboard_context():
 	context = {
-			'sectors': sorted(EmplSector.objects.all(), key=getSectorNum), 
+			'sectors': sorted(EmplSector.objects.all(), key=getSectorNum),
 			'months': Month.objects.filter(active=True),
 			}
 	return context
@@ -366,3 +366,11 @@ def numNewCheckins(company, month1, month2):
 			month1emails += checkin.email
 	return str(round(((newCount*1.0)/(len(month1emails)*1.0))*100, 2)) + "%"
 
+def nvobreakdown(request, selEmpID=None):
+	if selEmpID is None:
+		context = {'emps': Employer.objects.all()}
+		return render(request, 'leaderboard/chooseEmp.html', context)
+	else:
+		selEmp = Employer.objects.get(id=selEmpID)
+		context = {'CHART_DATA': getCanvasJSChart(selEmp, new=True), 'emp': selEmp}
+		return render(request, 'leaderboard/nvobreakdown.html', context)

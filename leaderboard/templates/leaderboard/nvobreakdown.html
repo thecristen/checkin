@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}New V. Old Breakdown{% endblock %}
+{% block javascript %}
+<script type="text/javascript">
+window.onload = function() {
+        var chart = new CanvasJS.Chart("emplBDGraph", {{ CHART_DATA|safe }});
+        chart.render();
+    }
+</script>
+<script type="text/javascript" src="/static/libs/canvasjs.min.js"></script>
+{% endblock %}
+{% block pageheader %}
+<h4>The New V. Old Breakdown for {{ emp }}</h4>
+<h4><a href='/nvobreakdown'>&larr; Go back to Employer selection</a></h4>
+{% endblock %}
+{% block body %}
+<div id="emplBDGraph" style="width:75%;height:450px"></div>
+{% endblock %}
