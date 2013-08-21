@@ -195,8 +195,7 @@ def getCanvasJSChartData(emp):
 	for month in Month.objects.filter(active=True).order_by('id'):
 		breakDown = getBreakDown(emp, month.month)
 		for i in range(0, 4):
-			if breakDown[intToModeConversion[i]] != 0:
-				chartData[i]['dataPoints'] += [{ 'label': month.short_name, 'y': breakDown[intToModeConversion[i]], 'name': iTMSConv[i] },]
+			chartData[i]['dataPoints'] += [{ 'label': month.short_name, 'y': breakDown[intToModeConversion[i]], 'name': iTMSConv[i] },]
 	return chartData
 
 def getNvRcJSChartData(emp):
