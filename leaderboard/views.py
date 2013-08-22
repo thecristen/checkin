@@ -41,7 +41,7 @@ def getTopCompanies(vvp, month, svs, sos):
 	elif svs == 'sector':
 		sector = EmplSector.objects.get(pk=sos)
 		if sector.parent != None:
-			emps = Employer.objects.filter(active=True, sector=sos)
+			emps = Employer.objects.filter(sector=sos)
 		else:
 			emps = emps.filter(sector=sos)
 	elif svs == 'name':
