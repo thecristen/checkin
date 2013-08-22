@@ -73,10 +73,10 @@ function makeChange(data, status) {
 
 function newEmp(data, status) {
 	if ($("#id_svs").val() == "name") {
-		$("#sector_label").parent("span").removeClass("hidden");
+		$("#sector_label").parents("span").removeClass("hidden");
 		$("#sector_label").text(data.emp_sector);
 		if (typeof data.emp_size_cat !== 'undefined') {
-			$("#size_label").parent("span").removeClass("hidden");
+			$("#size_label").parents("span").removeClass("hidden");
 			$("#size_label").text(data.emp_size_cat);
 		}
 	}
