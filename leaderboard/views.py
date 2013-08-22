@@ -35,7 +35,7 @@ def getSectorNum(sector):
 		return int(sector.name[:3])
 
 def getTopCompanies(vvp, month, svs, sos):
-	emps = Employer.objects.filter(active=True, sector__in=EmplSector.objects.filter(parent=None))
+	emps = Employer.objects.filter(sector__in=EmplSector.objects.filter(parent=None))
 	if svs == 'size':
 		emps = emps.filter(size_cat=sos)
 	elif svs == 'sector':
