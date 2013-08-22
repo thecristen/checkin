@@ -87,13 +87,11 @@ class Employer(models.Model):
 
 	def get_surveys(self, month):
 		if self.is_parent:
-			sectorEmps = []
-			for emp in Employer.objects.filter(sector=EmplSector.objects.get(parent=self.name)):
-				sectorEmps += [emp.name,]
+			sectorEmps = Employer.objects.filter(sector=EmplSector.objects.get(parent=self.name)).values_list('name', flat=True)
 			if month != 'all':
 				return Commutersurvey.objects.filter(month=month, employer__in=sectorEmps)
 			else:
-				return Commutersurvey.objects.filter(month__in=getMonths, employer__in=sectorEmps)
+				return Commutersurvey.objects.filter(month__in=getMonths(), employer__in=sectorEmps)
 		else:
 			if month != 'all':
 				return Commutersurvey.objects.filter(month=month, employer__exact=self.name)
@@ -102,13 +100,11 @@ class Employer(models.Model):
 
 	def get_nr_surveys(self, month):
 		if self.is_parent:
-			sectorEmps = []
-			for emp in Employer.objects.filter(sector=EmplSector.objects.get(parent=self.name)):
-				sectorEmps += [emp.name,]
+			sectorEmps = Employer.objects.filter(sector=EmplSector.objects.get(parent=self.name)).values_list('name', flat=True)
 			if month != 'all':
 				return Commutersurvey.objects.filter(month=month, employer__in=sectorEmps).count()
 			else:
-				return Commutersurvey.objects.filter(month__in=getMonths, employer__in=sectorEmps).count()
+				return Commutersurvey.objects.filter(month__in=getMonths(), employer__in=sectorEmps).count()
 		else:
 			if month != 'all':
 				return Commutersurvey.objects.filter(month=month, employer__exact=self.name).count()
