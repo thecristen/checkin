@@ -41,13 +41,13 @@ def getTopCompanies(vvp, month, svs, sos):
 	elif svs == 'sector':
 		sector = EmplSector.objects.get(pk=sos)
 		if sector.parent != None:
-			emps = Employer.objects.filter(active=True, sector=sos)
+			emps = Employer.objects.filter(sector=sos)
 		else:
 			emps = emps.filter(sector=sos)
 	elif svs == 'name':
 		nameList = []
 		for emp in sorted(emps, key=attrgetter('name')):
-			nameList += [(emp.name, 0, 0),]
+			nameList += [(emp.name, 0, 0, emp.nr_employees),]
 		return nameList
 	companyList = []
 	if vvp == 'perc':
@@ -303,7 +303,10 @@ def leaderboard_reply_data(vol_v_perc, month, svs, sos, focusEmployer=None):
 			'month': month,
 			'svs': svs,
 			'sos': sos,
+			'emp_sector': emp.sector.name,
 			}
+	if emp.size_cat is not None:
+		reply_data['emp_size_cat'] = emp.size_cat.name
 	return reply_data
 
 def leaderboard_company_detail(empName):
@@ -312,7 +315,10 @@ def leaderboard_company_detail(empName):
 			'chart_data': getCanvasJSChart(emp),
 			'checkin_matrix': getEmpCheckinMatrix(emp),
 			'total_breakdown': getBreakDown(emp, "all"),
+			'emp_sector': emp.sector.name,
 			}
+	if emp.size_cat is not None:
+		reply_data['emp_size_cat'] = emp.size_cat.name
 	return reply_data
 
 def leaderboard_context():

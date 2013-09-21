@@ -56,10 +56,10 @@ function makeChange(data, status) {
         empOptFS = '{0} place is {1} with {2}{3}';
     }
     else {
-        empOptFS = '{1}';
+		empOptFS = '{1} with {4} employees';
     }
     for(var i=0; i<data.top_companies.length; i++) {
-        $('#id_companies').append('<option value="{0}">{1}</option>'.format(data.top_companies[i][0], empOptFS.format(Number.getOrdinalFor(i+1, true), data.top_companies[i][0], data.top_companies[i][2], vvpMsg.format(data.top_companies[i][3]))));
+        $('#id_companies').append('<option value="{0}">{1}</option>'.format(data.top_companies[i][0], empOptFS.format(Number.getOrdinalFor(i+1, true), data.top_companies[i][0], data.top_companies[i][2], vvpMsg.format(data.top_companies[i][3]), data.top_companies[i][3])));
     }
     newEmp(data, status);
 }
@@ -72,6 +72,17 @@ function makeChange(data, status) {
  })([,"st","nd","rd"]);
 
 function newEmp(data, status) {
+	if ($("#id_svs").val() == "name") {
+		$("#sector_label").parents("span").removeClass("hidden");
+		$("#sector_label").text(data.emp_sector);
+		if (typeof data.emp_size_cat !== 'undefined') {
+			$("#size_label").parents("span").removeClass("hidden");
+			$("#size_label").text(data.emp_size_cat);
+		}
+	}
+	else {
+		$(".sas_label").addClass("hidden");
+	}
     var chart = new CanvasJS.Chart("breakDownGraph", data.chart_data);
     chart.render();
     $("#total_checkins").text(data.total_breakdown.total);
@@ -187,7 +198,10 @@ String.prototype.format = function() {
 </div>
 <div class="row">
 	<div class="span6" style="height:400px">
-		<div class="spacer" style="height:80px"></div>
+		<div class="spacer" style="height:80px">
+			<span class="hidden sas_label">Sector: <strong><span id="sector_label"></span></strong></span> <br />
+			<span class="hidden sas_label">Size Category: <strong><span id="size_label"></span></strong></span>
+		</div>
 		<div id="breakDownGraph" style="height:300px">
 		</div>
 	</div>
@@ -307,6 +321,15 @@ String.prototype.format = function() {
         </table>
 		<strong>W/R Day Commute</strong>
     </div>
+</div>
+<div class="row">
+	<div class="span8 offset2">
+		<hr />
+		<p>
+			Tip: Do not hit the back button on your browser &rarr; it distorts the data. Please use the dropdown menus instead. <br />
+			If problem persists, refresh the page.
+		</p>
+	</div>
 </div>
     
 <style type="text/css">
