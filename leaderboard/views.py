@@ -324,7 +324,7 @@ def leaderboard_company_detail(empName):
 def leaderboard_context():
 	context = {
 			'sectors': sorted(EmplSector.objects.all(), key=getSectorNum),
-			'months': Month.objects.filter(active=True),
+			'months': Month.objects.filter(active=True).order_by('-id'),
 			}
 	return context
 
