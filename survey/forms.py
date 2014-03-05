@@ -18,7 +18,7 @@ class CommuterForm(ModelForm):
 class StudentForm(ModelForm): 
     class Meta:
         model = Studentsurvey
-        exclude = ('ip', 'created')
+        exclude = ('ip', 'created',)
         widgets = {
           'school': HiddenInput(),   
         }
@@ -27,5 +27,5 @@ class StudentForm(ModelForm):
 class StudentgroupForm(ModelForm):
     class Meta:
         model = Studentgroup
-        exclude = ('created')
+        exclude = ('created',)
     
