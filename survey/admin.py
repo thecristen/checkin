@@ -7,7 +7,7 @@ from django.db.models import Sum, Count
 
 from django.forms import ModelForm
 
-from survey.models import School, Schooldistrict, Commutersurvey, Employer, EmplSector, EmplSizeCategory, Studentsurvey, Studentgroup
+from survey.models import Commutersurvey, Employer, EmplSector, EmplSizeCategory
 from leaderboard.models import Month
 # from django.contrib import admin
 from django.contrib.gis import admin
@@ -92,67 +92,9 @@ class MonthsAdmin(admin.ModelAdmin):
     list_editable = ['month', 'url_month', 'short_name', 'active']
     actions = [export_as_csv]
 
-class DistrictAdmin(admin.OSMGeoAdmin):
-    prepopulated_fields = {'slug': ('distname',)}
 
-
-class SchoolAdmin(admin.OSMGeoAdmin):
-    fieldsets = [
-        (None, 
-            {'fields': ['name', 'slug', 'survey_active', 'districtid']}),
-        ('School Database Attributes', 
-            {'fields': ['schid', 'address', 'town', 'state', 'zip', 'principal', 'phone', 'fax', 'grades', 'schl_type']}),
-        ('Map',
-            {'fields': ['geometry', ]}),
-    ]    
-    list_filter = ['survey_active']
-    list_display = ['name', 'survey_active', 'town', 'grades',]
-    list_editable = ['survey_active']
-    search_fields = ['name', 'districtid__distname']
-    ordering = ['districtid__distname']
-    prepopulated_fields = {'slug': ('name',)}
-    
-    def survey_count(self, obj):
-        return obj.survey_set.count()
-
-class StudentsurveyAdmin(admin.ModelAdmin):
-    list_display = ('month', 'school', 'teacher_email', 'num_students_sum', 'num_studentgroups_count', 'created')
-    list_filter = ['month', 'school__town', 'school']
-    list_display_links = ['school']
-    search_fields = ['school__name', 'teacher_name']
-    actions = [export_as_csv]
-
-    def queryset(self, request):
-        qs = super(StudentsurveyAdmin, self).queryset(request)
-        return qs.annotate(num_students=Sum('studentgroup__number'), num_studentgroups=Count('studentgroup'))
-
-    def num_students_sum(self, obj):
-        return obj.num_students
-    num_students_sum.short_description = 'Checked-in Students'
-    num_students_sum.admin_order_field = 'num_students_sum'
-
-    def num_studentgroups_count(self, obj):
-        return obj.num_studentgroups
-    num_studentgroups_count.short_description = 'Studentgroups'
-    num_studentgroups_count.admin_order_field = 'num_studentgroups_count'
-
-    
-class StudentgroupAdmin(admin.ModelAdmin):
-    list_display = ['month', 'teacher', 'number', 'distance', 'to_school_today', 'from_school_today']
-    list_display_links = ['teacher']
-    list_filter = ['teacher__month', 'teacher__school__town', 'teacher__school']
-    actions = [export_as_csv]
-
-    def month(self, obj):
-        return obj.teacher.month
-
-
-admin.site.register(Schooldistrict, DistrictAdmin)
-admin.site.register(School, SchoolAdmin)
 admin.site.register(Commutersurvey, CommutersurveyAdmin)
 admin.site.register(Employer, EmployerAdmin)
 admin.site.register(EmplSizeCategory, EmployerLookupAdmin)
 admin.site.register(EmplSector, EmployerSectorAdmin)
-admin.site.register(Studentsurvey, StudentsurveyAdmin)
-admin.site.register(Studentgroup, StudentgroupAdmin)
 admin.site.register(Month, MonthsAdmin)
