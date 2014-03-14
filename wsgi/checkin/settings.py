@@ -44,7 +44,6 @@ EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
 # SECURITY WARNING: keep the secret key used in production secret!
 # Make a dictionary of default keys
 default_keys = { 'SECRET_KEY': '^a1b2c3d4e5f6-' }
-# Replace default keys with dynamic values if we are in OpenShift
 use_keys = default_keys
 if ON_OPENSHIFT:
     imp.find_module('openshiftlibs')

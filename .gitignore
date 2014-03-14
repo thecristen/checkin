@@ -1,8 +1,20 @@
-data/*
-local_settings.py
-*.pyc
-*/migrations/*
+*.py[co]
+*.sw[po]
+*.bak
+*.orig
 *~
+*.log
+*.egg-info
+.gitignore
+.project
+.pydevproject
+venv/
+virtenv/
+dist/
+build/
 
 _work/*
-.gitignore
+data/*
+local_settings.py
+*/migrations/*
+*~
