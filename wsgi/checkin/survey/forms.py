@@ -1,6 +1,6 @@
 from django.forms import ModelForm, HiddenInput
 
-from survey.models import Commutersurvey, Studentsurvey, Studentgroup
+from survey.models import Commutersurvey
 
 
 class CommuterForm(ModelForm):
@@ -13,19 +13,4 @@ class CommuterForm(ModelForm):
                    'distance': HiddenInput(),
                    'duration': HiddenInput(),
                    }
-
-
-class StudentForm(ModelForm): 
-    class Meta:
-        model = Studentsurvey
-        exclude = ('ip', 'created',)
-        widgets = {
-          'school': HiddenInput(),   
-        }
-
-
-class StudentgroupForm(ModelForm):
-    class Meta:
-        model = Studentgroup
-        exclude = ('created',)
     

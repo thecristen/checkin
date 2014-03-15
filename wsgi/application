@@ -1,0 +1,6 @@
+#!/usr/bin/env python
+
+import checkin.wsgi
+
+# reuse the application callable from openshift.wsgi
+application = checkin.wsgi.application
