@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}500 Internal Server Error{% endblock %}
+
+{% block pageheader %}
+<h1>We're sorry, something went wrong...</h1>
+{% endblock pageheader %}
+
+{% block body %}
+
+<section>
+    <p><a href="{% url home %}">Walk/Ride Day</a></p>
+</section>
+
+{% endblock %}

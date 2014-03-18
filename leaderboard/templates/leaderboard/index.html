@@ -1,0 +1,5 @@
+<ul>
+    {% for checkin in latest_check_ins %}
+    <li>{{ checkin.name}} ({{ checkin.month }})</li>
+    {% endfor %}
+</ul>
