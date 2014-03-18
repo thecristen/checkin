@@ -130,10 +130,7 @@ STATICFILES_FINDERS = (
 
 STATIC_URL = '/static/'
 
-if ON_OPENSHIFT:
-    STATIC_ROOT = os.path.join(os.environ.get('OPENSHIFT_REPO_DIR'), 'wsgi', 'static')
-else:
-    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'wsgi', 'static')
 
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
@@ -142,10 +139,7 @@ STATICFILES_DIRS = (
 # Media files (user uploads, etc.)
 MEDIA_URL = '/media/'
 
-if ON_OPENSHIFT:
-    MEDIA_ROOT = os.path.join(os.environ.get('OPENSHIFT_REPO_DIR'), 'media')
-else:
-    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'wsgi', 'media')
 
 # Templates
 TEMPLATE_CONTEXT_PROCESSORS = DEFAULT_SETTINGS.TEMPLATE_CONTEXT_PROCESSORS + (
