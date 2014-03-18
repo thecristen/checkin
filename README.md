@@ -28,10 +28,6 @@ system and create a database.
 The project is built using [Django][7], a python based web framework. Install
 [Python][8] according to the instructions for your operating system.
 
-[OpenShift][13] is currently the deployment and hosting platform. The original 
-Django project layout was modified to fit OpenShift's convention. It lives now 
-in `/wsgi/checkin`.
-
 Project dependencies are handled with [pip][9]. Install [pip][9] according to 
 the instructions for your operating system.
 
@@ -63,16 +59,14 @@ You'll need to set a few environment variables in your virtual environment
     export DB_PASSWORD="database user password"
     export DB_PORT="5432"
     export DB_HOST="localhost"
-    export EMAIL_HOST_USER="email user"
-    export EMAIL_HOST_PASSWORD="email user password"
 
 Then you can let Django setup your database ...
 
-    $ python wsgi/checkin/manage.py syncdb
+    $ python manage.py syncdb
 
 and run the development server:
 
-    $ python wsgi/checkin/manage.py runserver
+    $ python manage.py runserver
 
 You should now see the project at [http://localhost:8000][11].
 
@@ -93,4 +87,3 @@ Copyright 2014 [Green Streets Initiative][12]
 [10]: http://virtualenvwrapper.readthedocs.org/
 [11]: http://localhost:8000
 [12]: http://gogreenstreets.org/
-[13]: https://www.openshift.com/
