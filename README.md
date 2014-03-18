@@ -9,13 +9,15 @@ Features:
 * QRcode sent by email to receive "goodies" from to sponsors and partners
 
 The project was originally developed at [MAPC][1] by Mariana Arcaya, Tim Reardon 
-and Christian Spanring. In 2013 it has become an entirely volunteer project.
+and Christian Spanring for the Green Streets Initiative. Since 2013 a group of
+volunteers is maintaining the code base and deployment.
 
 Past and present volunteer developers include:
 
 * [Cristen Jones][3]
 * [Owen Lynch][2]
 * [Christian Spanring][4]
+* John Freeman
 
 ## Getting Started
 
