@@ -16,5 +16,4 @@ build/
 _work/*
 data/*
 local_settings.py
-*/migrations/*
 *~
