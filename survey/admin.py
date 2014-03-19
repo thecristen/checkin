@@ -74,7 +74,7 @@ class CommutersurveyAdmin(admin.OSMGeoAdmin):
         ('Commute', 
             {'fields': ['home_address', 'work_address', 'to_work_today', 'from_work_today', 'to_work_normally', 'from_work_normally']}),
         ('Maps',
-            {'fields': ['home_location', 'work_location']}),
+            {'fields': ['geom', ]}),
         ('Meta',
             {'fields': ['ip']}),
     ]

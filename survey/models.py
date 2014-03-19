@@ -133,6 +133,9 @@ class Commutersurvey(models.Model):
 	work_location = models.PointField(geography=True, blank=True, null=True, default='POINT(0 0)')
 	work_address = models.CharField(max_length=200)
 
+	# commute line string
+	geom = models.MultiLineStringField(geography=True, blank=True, null=True)
+
 	distance = models.DecimalField(max_digits=10, decimal_places=1, blank=True, null=True)
 	duration = models.DecimalField(max_digits=10, decimal_places=1, blank=True, null=True)
 
