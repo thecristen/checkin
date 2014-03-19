@@ -27,6 +27,16 @@ COMMUTER_MODES = (
         ('tc', _('Telecommuting')),
         )
 
+LEG_DIRECTIONS = (
+    ('tw', _('to work')),
+    ('fw', _('from work')),
+    )
+
+LEG_TYPES = (
+    ('w', _('Walk/Ride Day')),
+    ('n', _('Normal day')),
+    )
+
 
 class EmplSizeCategory(models.Model):
     name = models.CharField(max_length=50)
@@ -121,6 +131,25 @@ class Employer(models.Model):
         return returningSurveys
 
 
+class Leg(models.Model):
+    """
+    A leg (part) of a commute. One commute can be composed of multiple legs of 
+    different transportation modes.
+    """
+
+    mode = models.CharField(blank=False, null=True, max_length=2, choices=COMMUTER_MODES)
+    direction = models.CharField(blank=False, null=True, max_length=2, choices=LEG_DIRECTIONS)
+    type = models.CharField(blank=False, null=True, max_length=1, choices=LEG_TYPES)
+    longest = models.BooleanField('Longest Leg', help_text='Longest leg in this commute')
+
+    class Meta:
+        verbose_name = _('Leg')
+        verbose_name_plural = _('Legs')
+
+    def __unicode__(self):
+        return u'%s' % (self.mode) 
+    
+
 class Commutersurvey(models.Model):
     """
     Questions for adults about their commute work
@@ -135,7 +164,7 @@ class Commutersurvey(models.Model):
     work_address = models.CharField(max_length=200)
 
     # commute line string
-    geom = models.MultiLineStringField(geography=True, blank=True, null=True)
+    geom = models.MultiLineStringField('Commute', geography=True, blank=True, null=True)
 
     distance = models.DecimalField(max_digits=10, decimal_places=1, blank=True, null=True)
     duration = models.DecimalField(max_digits=10, decimal_places=1, blank=True, null=True)
@@ -146,6 +175,8 @@ class Commutersurvey(models.Model):
     from_work_normally = models.CharField(max_length=2, blank=False, null=True, choices=COMMUTER_MODES) 
 
     other_greentravel = models.BooleanField(default=False)
+
+    legs = models.ManyToManyField(Leg)
 
     name = models.CharField(max_length=50, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
