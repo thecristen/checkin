@@ -7,7 +7,7 @@ from django.db.models import Sum, Count
 
 from django.forms import ModelForm
 
-from survey.models import Commutersurvey, Employer, EmplSector, EmplSizeCategory
+from survey.models import Commutersurvey, Employer, EmplSector, EmplSizeCategory, Leg
 from leaderboard.models import Month
 # from django.contrib import admin
 from django.contrib.gis import admin
@@ -72,9 +72,9 @@ class CommutersurveyAdmin(admin.OSMGeoAdmin):
         (None, 
             {'fields': ['month', 'name', 'email', 'employer', 'newsletter']}),
         ('Commute', 
-            {'fields': ['home_address', 'work_address', 'to_work_today', 'from_work_today', 'to_work_normally', 'from_work_normally']}),
+            {'fields': ['home_address', 'work_address', 'legs', ]}),
         ('Maps',
-            {'fields': ['home_location', 'work_location']}),
+            {'fields': ['geom', ]}),
         ('Meta',
             {'fields': ['ip']}),
     ]
@@ -98,3 +98,4 @@ admin.site.register(Employer, EmployerAdmin)
 admin.site.register(EmplSizeCategory, EmployerLookupAdmin)
 admin.site.register(EmplSector, EmployerSectorAdmin)
 admin.site.register(Month, MonthsAdmin)
+admin.site.register(Leg, admin.ModelAdmin)
