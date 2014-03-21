@@ -1,12 +1,10 @@
-"""
-Django settings for checkin project.
+# Django settings for checkin project.
 
-For more information on this file, see
-https://docs.djangoproject.com/en/1.6/topics/settings/
-
-For the full list of settings and their values, see
-https://docs.djangoproject.com/en/1.6/ref/settings/
-"""
+# For more information on this file, see
+# https://docs.djangoproject.com/en/1.6/topics/settings/
+ 
+# For the full list of settings and their values, see
+# https://docs.djangoproject.com/en/1.6/ref/settings/
 
 import imp, os
 
@@ -129,12 +127,12 @@ TEMPLATE_DIRS = (
 
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
-<<<<<<< HEAD:checkin/settings.py
+# <<<<<<< HEAD:checkin/settings.py
 
 POSTGIS_VERSION = (2, 0, 3)
 
-=======
->>>>>>> upstream/master:wsgi/checkin/settings.py
+# =======
+# >>>>>>> upstream/master:wsgi/checkin/settings.py
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
