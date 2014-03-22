@@ -140,7 +140,7 @@ $(document).ready(function() {
         $("#id_work_location").val("POINT (" + this.position.lng() + " " +  this.position.lat() + ")");
     });
     
-    // map animation
+    map animation
     var toggleBounce = function () {
         if (markerH.getAnimation() != null) {
             markerH.setAnimation(null);
@@ -149,8 +149,8 @@ $(document).ready(function() {
         }
     }
     
-    // impact buttons
-    // use Google directions distance as base
+    impact buttons
+    use Google directions distance as base
     var directionsService = new google.maps.DirectionsService();
     $("#button_co2").click(function() {
         
@@ -267,7 +267,7 @@ $(document).ready(function() {
         return false;
     });
 
-    // receives an array of points and adjusts the map extent accordingly
+    receives an array of points and adjusts the map extent accordingly
     var setMapBounds = function (points) {  
         var mapbounds = new google.maps.LatLngBounds();
         $.each(points, function(index, point) { 
@@ -277,7 +277,7 @@ $(document).ready(function() {
     }
 
 
-    // trigger geocoding given address and move markers on map 
+    trigger geocoding given address and move markers on map 
     $("#locate_home, #locate_work").on("click", function() {
         var address_type = this.id.split("_")[1]; // home or work
         geocodeAddress(address_type);
@@ -388,6 +388,7 @@ $(document).ready(function() {
       <form id="surveyform" role="form" class="form-horizontal" action="." method="POST">
 
         {% csrf_token %}
+
         <hr>
         <p>The information you share with us may be shared with your employer, if you are an employee of a company participating in the Walk/Ride Day Corporate Challenge, unless you check the box below. Please note that we will not share your identifying information with any organization other than your employer if your workplace is participating in the Challenge. 
          <label class="checkbox">
@@ -404,102 +405,125 @@ $(document).ready(function() {
          </div>
             
     <!-- 1 tell us about yourself -->
-    <hr>
-        <fieldset id="personalinfo">
+
+      <hr>
+      <fieldset id="personalinfo">
         <legend>About you</legend>
         
         <div class="form-group">
-        
-            <label class="control-label col-sm-3">Your name</label>
-            <div class="col-sm-9">
-            <input id="id_name"  class="form-control" maxlength="50" name="name" type="text" ></div>
-            <label class="control-label col-sm-3">Your email:</label>
-            <div class="col-sm-9">
+          <label class="control-label col-sm-3" for="id_name">Your name</label>
+          <div class="col-sm-9">
+            <input id="id_name"  class="form-control" maxlength="50" name="name" type="text" >
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-sm-3" for="id_email">Your email:</label>
+          <div class="col-sm-9">
             <input id="id_email"  class="form-control" maxlength="75" name="email" type="email">
-            <span class="help-block">Please use your work email if your employer is part of the Walk/Ride Day Challenge</span></div>
- 
-            <label class="control-label col-sm-3">Your employer's name:</label>
-            <div class="col-sm-9">
+            <span class="help-block">Please use your work email if your employer is part of the Walk/Ride Day Challenge</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-sm-3">Your employer's name:</label>
+          <div class="col-sm-9">
             <select class="form-control" id="id_employer" name="employer">
-            <option value="FindEmployer" data-iconurl="img/commercial-12.png"> Find employer</option>
-            <option value="Other employer (not registered in Challenge)">Other employer (not registered in Challenge)</option>
-            <option value="Self">Self</option>
-            {% for employer in employers %}<option value="{{ employer.name|escape }}">{{ employer.name|escape }}</option>{% endfor %}
+              <option value="FindEmployer" data-iconurl="img/commercial-12.png"> Find employer</option>
+              <option value="Other employer (not registered in Challenge)">Other employer (not registered in Challenge)</option>
+              <option value="Self">Self</option>
+              {% for employer in employers %}<option value="{{ employer.name|escape }}">{{ employer.name|escape }}</option>{% endfor %}
             </select>
-            <span class="help-block required_field"> Required if your employer is part of the Walk/Ride Day Challenge.</span></div>
-        
-        </div></fieldset>
+            <span class="help-block required_field"> Required if your employer is part of the Walk/Ride Day Challenge.</span>
+          </div>
+        </div>
+      </fieldset>
 
     <!-- location -->
-        <hr>
-        <fieldset id="locations">
+
+      <hr>
+      <fieldset id="locations">
         <legend>Your locations</legend>
 
         <div class="form-group">
-            <label class="control-label col-sm-3">Starting location</label>
-            <div class="col-sm-7">
+          <label class="control-label col-sm-3" for="id_home_address">Starting location</label>
+          <div class="col-sm-7">
             <input type="text" class="form-control" id="id_home_address" name="home_address" placeholder="1 Main St, Boston, MA 02111">
             <span class="help-block"> Where does your commute to work begin?</span>
-            </div>
-            <div class="col-sm-2">
-            <a id="locate_home" class="btn btn-info">Locate</a>
-            </div>
+          </div>
+          <div class="col-sm-2">
+            <a id="locate_home" class="btn btn-primary">Locate</a>
+          </div>
         </div>
         
-        
         <div class="form-group">
-            <label class="control-label col-sm-3">Work location</label>
-            <div class="col-sm-7">
-            <input type="text" class="form-control" id="id_home_address" name="home_address" placeholder="100 Main St, Boston, MA 02111">
+          <label class="control-label col-sm-3" for="id_work_address">Work location</label>
+          <div class="col-sm-7">
+            <input type="text" class="form-control" id="id_work_address" name="work_address" placeholder="100 Main St, Boston, MA 02111">
             <span class="help-block"> What is the address where you work/worked today? If you telecommuted today, please enter the work address where you most often work when you don't telecommute.</span>
-            </div>
-            <div class="col-sm-2">
-            <a id="locate_home" class="btn btn-info">Locate</a>
-            </div>
+          </div>
+          <div class="col-sm-2">
+            <a id="locate_home" class="btn btn-primary">Locate</a>
+          </div>
         </div>
        
         <p>You can <a data-toggle="collapse" data-target="#map_container" href="javascript:void(0)">view the map</a>, to verify and make sure we located your addresses correctly.</p>
 
-                    <div id="map_container" class="collapse">
-                        <div id="map_canvas" class="well">map div</div>
-                        <p class="help-block">Drag and drop your <img src="../static/img/home.png" alt="Home marker" > home and <img src="../static/img/factory.png" alt="Home marker" > work location to the correct spot on the map if they seem wrong.</p>                       
-                    </div>
+        <div id="map_container" class="collapse">
+            <div id="map_canvas" class="well">map div</div>
+            <p class="help-block">Drag and drop your <img src="../static/img/home.png" alt="Home marker" > home and <img src="../static/img/factory.png" alt="Home marker" > work location to the correct spot on the map if they seem wrong.</p>                       
+        </div>
                 
-                    {{ surveyform.home_location }}
-                    {{ surveyform.work_location }}
-                    {{ surveyform.distance }}
-                    {{ surveyform.duration }}  
+        {{ surveyform.home_location }}
+        {{ surveyform.work_location }}
+        {{ surveyform.distance }}
+        {{ surveyform.duration }}  
 
-
-       
-        </fieldset>
+      </fieldset>
         
     <!--      walk/ride    -->
+
         <hr><fieldset id="walkride">
         
         <legend>Walk/Ride Day</legend>
-        
-        <h4>How did you commute TO work on Walk/Ride Day?</h4>
 
         <!-- begin picking modes of transport -->
         <div class="form-group">
      
             <div id="legs">
             
-            <div class="col-sm-3 right"><button class="btn btn-primary morelegs"><span class="button">Add new leg</span></button></div>
-            <div class="col-sm-9">
-            <select id="id_to_work_today" name="to_work_today" class="form-control" >
-            <option value="" selected="selected">Please select mode of transportation</option>
-            <option value="da" data-iconurl="img/car-24.png">Driving alone</option>
-            <option value="dalt" data-iconurl="img/car-24.png">Driving alone, alternative vehicle (taxi, hybrid, or electric vehicle, and car share)</option>
-            <option value="cp" data-iconurl="img/car-24.png">Carpool</option>
-            <option value="t" data-iconurl="img/rail-24.png">Transit (subway, city bus, coach bus, train, ferry, shuttle, etc.)</option>
-            <option value="b" data-iconurl="img/bicycle-24.png">Bike</option>
-            <option value="r" data-iconurl="img/school-24.png">Jog/Run</option>
-            <option value="w" data-iconurl="img/pitch-24.png">Walk</option>               
-            <option value="o" data-iconurl="img/scooter-24.png">Other (roller blade, scooter, kayak, etc.)</option>
-            <option value="tc" data-iconurl="img/warehouse-24.png">Telecommute</option>
-            </select>
+            <div class="col-sm-3 right">
+              <label>How did you commute TO work on Walk/Ride Day?</label>
+            </div>
+
+            <div class="col-sm-7">
+              <select id="id_to_work_today" name="to_work_today" class="form-control" >
+              <option value="" selected="selected">Please select mode of transportation</option>
+              <option value="da" data-iconurl="img/car-24.png">Driving alone</option>
+              <option value="dalt" data-iconurl="img/car-24.png">Driving alone, alternative vehicle (taxi, hybrid, or electric vehicle, and car share)</option>
+              <option value="cp" data-iconurl="img/car-24.png">Carpool</option>
+              <option value="t" data-iconurl="img/rail-24.png">Transit (subway, city bus, coach bus, train, ferry, shuttle, etc.)</option>
+              <option value="b" data-iconurl="img/bicycle-24.png">Bike</option>
+              <option value="r" data-iconurl="img/school-24.png">Jog/Run</option>
+              <option value="w" data-iconurl="img/pitch-24.png">Walk</option>               
+              <option value="o" data-iconurl="img/scooter-24.png">Other (roller blade, scooter, kayak, etc.)</option>
+              <option value="tc" data-iconurl="img/warehouse-24.png">Telecommute</option>
+              </select>
+            </div>
+            <div class="col-sm-2">
+              <div class="radio">
+              <label>
+                <input type="radio" name="ll_tw" id="ll_1"> Longest leg
+              </label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-sm-2 col-sm-offset-3">
+          <button class="btn btn-primary morelegs"><span class="button">Add new leg</span></button>
+          </div>
+        </div>
+
+<!--
             <select id="id_to_work_today_time" name="to_work_today_time" class="form-control" >
             <option value="" selected="selected">Please estimate time</option>
             <option value="1">Less than 15 minutes</option>
@@ -509,8 +533,8 @@ $(document).ready(function() {
             <option value="5">More than an hour</option>
 
             </select>
-            </div>
-            </div>
+
+-->
             
           
                 <div id="morelegs">
@@ -573,7 +597,6 @@ $(document).ready(function() {
             
                      
             </div></div>
-        </div>
         
         <!-- end picking modes of transport -->
 
