@@ -34,13 +34,20 @@
     <meta itemprop="image" content="http://gogreenstreets.org/sites/all/themes/vendor/theme525/images/header-banner.jpg">
     
     {% block style %}
+
     <link rel="stylesheet" href="/static/libs/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="http://bootswatch.com/lumen/bootstrap.min.css">
     <link rel="stylesheet" href="/static/css/style.css">
+
+
     <!--[if lte IE 8]>
     <link rel="stylesheet" href="/static/css/ie8.css">
     <![endif]-->
     {% endblock %}
+
+    {% block morestyle %}
+    {% endblock %}
+
     
 
     <script type="text/javascript">
@@ -67,257 +74,25 @@
 <hr>  
     <div class="main container {{ LANGUAGE_CODE }}">
 
-    <div>
-            <h1>Walk/Ride Day 2014 Check-In Form</h1>
-            <h4>April 25 | May 30 | June 27 | July 25 | August 29 | September 26 | October 31</h4>
-            <p class="lead">A check-in helps us monitor the impact of our initiative and involves only a few quick steps. </p>
-   
-      </div>
+        {% block pageheader %}{% endblock pageheader %}
 
-    {% block body %}{% endblock %}
 
-    <footer class="footer">
-        <p>
-            {% trans "Questions? Please contact" %} <a class="nowrap" href="mailto:info@GoGreenStreets.org?subject=Walk/Ride Day Check-in Question">info@GoGreenStreets.org</a><br />
-            &copy; <a href="http://www.gogreenstreets.org" title="Green Streets Initiative">Green Streets Initiative</a> 2014
-        </p>    
-    </footer>
+        {% block body %}{% endblock %}
+
+        <footer class="footer">
+            <p>
+                {% trans "Questions? Please contact" %} <a class="nowrap" href="mailto:info@GoGreenStreets.org?subject=Walk/Ride Day Check-in Question">info@GoGreenStreets.org</a><br />
+                &copy; <a href="http://www.gogreenstreets.org" title="Green Streets Initiative">Green Streets Initiative</a> 2014
+            </p>    
+        </footer>
     
     </div>
 
     <!-- JavaScripts -->
-    <script src="/static/libs/jquery-1.11.0.min.js" type="text/javascript"></script>
-
+    
+    
     {% block javascript %}{% endblock %}
-  <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
-<script src="http://gregfranko.com/jquery.selectBoxIt.js/js/jquery.selectBoxIt.min.js"></script>
-<script type="text/javascript">
-//Executes your code when the DOM is ready.  Acts the same as $(document).ready().
-    // $(function() {
-    //   //Calls the selectBoxIt method on your HTML select box.
-    //   $("select").selectBoxIt();
-    // });
+  
 
-$('#morelegs').hide();
-    
-//reveal morelegs div
-$('.morelegs').click(function(e) {
-    e.stopPropagation();
-    e.preventDefault();
-    $("#morelegs").show();
-    $('.morelegs').hide();
-    }); 
-    
-$('.lesslegs').click(function(e) {
-    e.stopPropagation();
-    e.preventDefault();
-    $("#morelegs").hide();
-    $('.morelegs').show();
-    });     
-
-$('#morelegsagain').hide();
-    
-//reveal morelegs div
-$('.morelegsagain').click(function(e) {
-    e.stopPropagation();
-    e.preventDefault();
-    $("#morelegsagain").show();
-    $('.lesslegs').hide();
-    $('.morelegsagain').hide();
-    }); 
-    
-$('.lesslegsagain').click(function(e) {
-    e.stopPropagation();
-    e.preventDefault();
-    $("#morelegsagain").hide();
-    
-    $('.lesslegs').show();
-    $('.morelegsagain').show();
-    });  
-    
-$('#morelegsaway').hide();
-    
-//reveal morelegs div
-$('.morelegsaway').click(function(e) {
-    e.stopPropagation();
-    e.preventDefault();
-    $("#morelegsaway").show();
-    $('.morelegsaway').hide();
-    }); 
-    
-$('.lesslegsaway').click(function(e) {
-    e.stopPropagation();
-    e.preventDefault();
-    $("#morelegsaway").hide();
-    $('.morelegsaway').show();
-    });     
-
-$('#morelegsagainaway').hide();
-    
-//reveal morelegs div
-$('.morelegsagainaway').click(function(e) {
-    e.stopPropagation();
-    e.preventDefault();
-    $("#morelegsagainaway").show();
-    $('.lesslegsaway').hide();
-    $('.morelegsagainaway').hide();
-    }); 
-    
-$('.lesslegsagainaway').click(function(e) {
-    e.stopPropagation();
-    e.preventDefault();
-    $("#morelegsagainaway").hide();
-    
-    $('.lesslegsaway').show();
-    $('.morelegsagainaway').show();
-    });  
-    
-
-///////
-
-$('#morelegsN').hide();
-    
-//reveal morelegs div
-$('.morelegsN').click(function(e) {
-    e.stopPropagation();
-    e.preventDefault();
-    $("#morelegsN").show();
-    $('.morelegsN').hide();
-    }); 
-    
-$('.lesslegsN').click(function(e) {
-    e.stopPropagation();
-    e.preventDefault();
-    $("#morelegsN").hide();
-    $('.morelegsN').show();
-    });     
-
-$('#morelegsagainN').hide();
-    
-//reveal morelegs div
-$('.morelegsagainN').click(function(e) {
-    e.stopPropagation();
-    e.preventDefault();
-    $("#morelegsagainN").show();
-    $('.lesslegsN').hide();
-    $('.morelegsagainN').hide();
-    }); 
-    
-$('.lesslegsagainN').click(function(e) {
-    e.stopPropagation();
-    e.preventDefault();
-    $("#morelegsagainN").hide();
-    
-    $('.lesslegsN').show();
-    $('.morelegsagainN').show();
-    });  
-    
-$('#morelegsawayN').hide();
-    
-//reveal morelegs div
-$('.morelegsawayN').click(function(e) {
-    e.stopPropagation();
-    e.preventDefault();
-    $("#morelegsawayN").show();
-    $('.morelegsawayN').hide();
-    }); 
-    
-$('.lesslegsawayN').click(function(e) {
-    e.stopPropagation();
-    e.preventDefault();
-    $("#morelegsawayN").hide();
-    $('.morelegsawayN').show();
-    });     
-
-$('#morelegsagainawayN').hide();
-    
-//reveal morelegs div
-$('.morelegsagainawayN').click(function(e) {
-    e.stopPropagation();
-    e.preventDefault();
-    $("#morelegsagainawayN").show();
-    $('.lesslegsawayN').hide();
-    $('.morelegsagainawayN').hide();
-    }); 
-    
-$('.lesslegsagainawayN').click(function(e) {
-    e.stopPropagation();
-    e.preventDefault();
-    $("#morelegsagainawayN").hide();
-    
-    $('.lesslegsawayN').show();
-    $('.morelegsagainawayN').show();
-    });
-
-
-
-
-
-
-
-
-
-//////
-
-
-
-
-
-    
-
-
-$("#AwayWRNo").hide();
-
-         
-    $(function() {
-    $types1 = $('.AwayWR');
-    $away1 = $('#AwayWRNo');
-    $types1.change(function() {
-        $this = $(this).val();
-        if ($this == "AwayWRNo") {
-            $away1.show(500);
-                    }
-        else  {
-            $away1.hide(250);
-        }
-    });
-});    
-
-$("#ToNormNo").hide();
- 
-    $(function() {
-    $types2 = $('.ToNorm');
-    $away2 = $('#ToNormNo');
-    $types2.change(function() {
-        $this = $(this).val();
-        if ($this == "ToNormNo") {
-            $away2.show(500);
-                    }
-        else  {
-            $away2.hide(250);
-        }
-    });
-});   
-
-
-$("#AwayNormNo").hide();
- 
-    $(function() {
-    $types = $('.AwayNorm');
-    $away = $('#AwayNormNo');
-    $types.change(function() {
-        $this = $(this).val();
-        if ($this == "AwayNormNo") {
-            $away.show(500);
-                    }
-        else  {
-            $away.hide(250);
-        }
-    });
-});   
-
-
-
-</script>
 </body>
 </html>

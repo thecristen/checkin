@@ -3,9 +3,8 @@
 
 {% block title %}Welcome!{% endblock %}
 
-{% block pageheader %}
-<h1 class="front-page">Walk/Ride Day Check-In</h1>
-{% endblock pageheader %}
+
+
 
 {% block socialmedia %}
 <div id="fb-root"></div>
@@ -45,23 +44,24 @@
 </script>
 {% endblock %}
 
+{% block pageheader %}
+<center><h1>Walk/Ride Day 2014<br>Check In your commute!</h1>
+<h4>April 25 | May 30 | June 27 | July 25 | August 29 | September 26 | October 31</h4></center>
+{% endblock pageheader %}
+
 {% block body %}
+<hr>
 <section class="front-page">
-    <div class="row">
-      <div class="span12">
         <p class="lead">Completing this short survey for each month's <span class="wrday">Walk/Ride Day</span> helps us, you, your employer, and others, see the impact of <span class="nowrap">Walk/Ride Days</span>.<br>
         It also counts you in for the Walk/Ride Day Corporate Challenge!</p>
         <p class="lead"><strong>After filling it out, you will get confirmation for <a href="http://gogreenstreets.org/retailers">Retail Partners' rewards</a><br> and be entered into an online raffle!</strong></p>
         <p class="lead"><a href="{% url 'commuterform' %}" class="btn btn-large btn-success" tabindex="3">Check-in Walk/Ride Day commute!</a></p>
         <p>Your check-in will be faster if you're using the same computer and web browser next month again.</p>
         <p class="lead">Thank you for checking in and for traveling sustainably!</p>
-      </div>
-    </div>
-</section>
+</section>      
+
 
 <section class="social-media front-page">
-    <div class="row">
-      <div class="span12">
           <p class="lead">Share with your friends!</p>
           <ul class="unstyled">
             <li class="twitterwidget"><a href="https://twitter.com/share" class="twitter-share-button" data-url="http://checkin.gogreenstreets.org" data-counturl="http://checkin.gogreenstreets.org" data-related="walkridedays" data-text="I'm commuting green today!" data-hashtags="walkrideday">Tweet</a>
@@ -72,38 +72,35 @@
               js.src="//platform.twitter.com/widgets.js"; fjs.parentNode.insertBefore(js, fjs);
               return window.twttr || (t = { _e: [], ready: function(f){ t._e.push(f) } });
             }(document, "script", "twitter-wjs"));
-
-                // tracking Twitter
-                function extractParamFromUri(uri, paramName) {
-                  if (!uri) {
-                    return;
-                  }
-                  var regex = new RegExp('[\\?&#]' + paramName + '=([^&#]*)');
-                  var params = regex.exec(uri);
-                  if (params != null) {
-                    return unescape(params[1]);
-                  }
-                  return;
-                }
-                function trackTwitter(intent_event) {
-                if (intent_event) {
-                  var opt_pagePath;
-                  if (intent_event.target && intent_event.target.nodeName == 'IFRAME') {
-                        opt_target = extractParamFromUri(intent_event.target.src, 'url');
-                  }
-                  _gaq.push(['_trackSocial', 'twitter', 'tweet', opt_pagePath]);
-                }
-                }
-                //Wrap event bindings - Wait for async js to load
-                twttr.ready(function (twttr) {
-                    //event bindings
-                    twttr.events.bind('tweet', trackTwitter);
-                });
+            // tracking Twitter
+            function extractParamFromUri(uri, paramName) {
+              if (!uri) {
+                return;
+              }
+              var regex = new RegExp('[\\?&#]' + paramName + '=([^&#]*)');
+              var params = regex.exec(uri);
+              if (params != null) {
+                return unescape(params[1]);
+              }
+              return;
+            }
+            function trackTwitter(intent_event) {
+            if (intent_event) {
+              var opt_pagePath;
+              if (intent_event.target && intent_event.target.nodeName == 'IFRAME') {
+                    opt_target = extractParamFromUri(intent_event.target.src, 'url');
+              }
+              _gaq.push(['_trackSocial', 'twitter', 'tweet', opt_pagePath]);
+            }
+            }
+            //Wrap event bindings - Wait for async js to load
+            twttr.ready(function (twttr) {
+                //event bindings
+                twttr.events.bind('tweet', trackTwitter);
+            });
             </script></li>
             <li><g:plusone size="medium"></g:plusone></li>
             <li><div class="fb-like" data-href="http://checkin.gogreenstreets.org" data-send="false" data-layout="button_count" data-show-faces="false"></div></li>
           </ul>
-      </div>
-    </div> 
 </section>
 {% endblock %}
