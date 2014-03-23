@@ -1,12 +1,10 @@
-"""
-Django settings for django_test project.
+# Django settings for checkin project.
 
-For more information on this file, see
-https://docs.djangoproject.com/en/1.6/topics/settings/
-
-For the full list of settings and their values, see
-https://docs.djangoproject.com/en/1.6/ref/settings/
-"""
+# For more information on this file, see
+# https://docs.djangoproject.com/en/1.6/topics/settings/
+ 
+# For the full list of settings and their values, see
+# https://docs.djangoproject.com/en/1.6/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
@@ -93,6 +91,7 @@ WSGI_APPLICATION = 'checkin.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
+<<<<<<< HEAD
 <<<<<<< HEAD:wsgi/checkin/settings.py
 <<<<<<< HEAD:checkin/settings.py
 
@@ -103,6 +102,9 @@ POSTGIS_VERSION = (2, 0, 3)
 =======
 
 >>>>>>> upstream/master:checkin/settings.py
+=======
+
+>>>>>>> upstream/master
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
