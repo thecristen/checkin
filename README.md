@@ -9,15 +9,13 @@ Features:
 * QRcode sent by email to receive "goodies" from to sponsors and partners
 
 The project was originally developed at [MAPC][1] by Mariana Arcaya, Tim Reardon 
-and Christian Spanring for the Green Streets Initiative. Since 2013 a group of
-volunteers is maintaining the code base and deployment.
+and Christian Spanring. In 2013 it has become an entirely volunteer project.
 
 Past and present volunteer developers include:
 
 * [Cristen Jones][3]
 * [Owen Lynch][2]
 * [Christian Spanring][4]
-* John Freeman
 
 ## Getting Started
 
@@ -29,6 +27,10 @@ system and create a database.
 
 The project is built using [Django][7], a python based web framework. Install
 [Python][8] according to the instructions for your operating system.
+
+[OpenShift][13] is currently the deployment and hosting platform. The original 
+Django project layout was modified to fit OpenShift's convention. It lives now 
+in `/wsgi/checkin`.
 
 Project dependencies are handled with [pip][9]. Install [pip][9] according to 
 the instructions for your operating system.
@@ -61,14 +63,16 @@ You'll need to set a few environment variables in your virtual environment
     export DB_PASSWORD="database user password"
     export DB_PORT="5432"
     export DB_HOST="localhost"
+    export EMAIL_HOST_USER="email user"
+    export EMAIL_HOST_PASSWORD="email user password"
 
 Then you can let Django setup your database ...
 
-    $ python manage.py syncdb
+    $ python wsgi/checkin/manage.py syncdb
 
 and run the development server:
 
-    $ python manage.py runserver
+    $ python wsgi/checkin/manage.py runserver
 
 You should now see the project at [http://localhost:8000][11].
 
@@ -89,3 +93,4 @@ Copyright 2014 [Green Streets Initiative][12]
 [10]: http://virtualenvwrapper.readthedocs.org/
 [11]: http://localhost:8000
 [12]: http://gogreenstreets.org/
+[13]: https://www.openshift.com/
